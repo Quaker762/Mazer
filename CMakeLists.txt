@@ -1,7 +1,12 @@
+# Basic CMake file
+
 cmake_minimum_required(VERSION 3.0.0)
-project(mazer)
+project(cpp) # Tell CMake this is a C++ project
 
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -std=c++14")
 include_directories(include)
-file(GLOB SOURCES "src/*.cpp")
 
-add_executable(build/mazer ${SOURCES})
+file(GLOB SOURCES "source/*.cpp")
+
+add_executable(mazer ${SOURCES})
+
