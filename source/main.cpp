@@ -5,6 +5,6 @@ int main(int argc, char** argv)
 {
     std::cout << "Hello, World!\n" << std::endl;
 
-    Log(LogLevel::INFO, "Hello, World %d %d!\n", 5, 10);
+    Log(LogLevel::INFO, "%d\n", sizeof(std::string));
     return 0;
 }

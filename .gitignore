@@ -32,9 +32,11 @@
 *.out
 *.app
 mazer
+mazegen
 
 # CMake shit
 CMakeCache.txt
 cmake_install.cmake
 CMakeFiles/*
 Makefile
+log.txt
