@@ -7,24 +7,6 @@
 #include <string>
 #include <vector>
 
-/**
- *  Defines a logical (x, y) position in cartesian space
- */
-struct point_t
-{
-    int x;
-    int y;
-} __attribute__((packed));
-
-/**
- *  An edge is defined 
- */
-struct edge_t
-{
-    point_t cellA;
-    point_t cellB;
-} __attribute__((packed));
-
 class Maze
 {
 public:
@@ -67,7 +49,7 @@ private:
 
     LoadStatus status;                          /** Load status of this map */
 
-    std::vector<std::vector<edge_t>> cells;    /**< Cell list, each _nested_ vector defines a ROW in the map (cells.at(0) would equate to ROW 0). */
+//    std::vector<std::vector<edge_t>> cells;    /**< Cell list, each _nested_ vector defines a ROW in the map (cells.at(0) would equate to ROW 0). */
 };
 
 
