@@ -9,5 +9,4 @@ include_directories(include)
 file(GLOB SOURCES "source/*.cpp")
 
 add_executable(mazer ${SOURCES})
-add_executable(mazegen "source/gen/mazegen.cpp")
 
