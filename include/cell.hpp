@@ -21,14 +21,64 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  **/
-namespace mazer{namespace map{
+namespace mazer{
 
-class Cell
+/**
+ *  Cell class. Each square defines a logical (x,y) point on our maze. Each maze is made up
+ *  of MxN cells (where M and N are valid integers). However, if desired, any type
+ *  can be used in place (such as a float?!).
+ */
+template <typename T>
+class CCell
 {
+
 public:
+    /**
+     *  Which way is this cell facing?
+     */
+    enum class DIRECTION
+    {
+        UP,     /** Walls on left and right side */
+        DOWN,   /** Walls on left and right side */
+        LEFT,   /** Walls on top, bottom and right side */
+        RIGHT   /** Walls on top, bottom and left side */
+    }
+
+public:
+    /**
+     *  Default constructor
+     */
+    CCell() = default;
+
+    /**
+     *  
+     */
+    CCell(T x, T y);
+
+    /**
+     *  Set x-loc.
+     */
+    void SetX(T x);
+
+    /**
+     *  Get x-loc.
+     */
+    T GetX() const;
+
+    /**
+     *  Set y-loc.
+     */
+    void SetY(T y);
+
+    /**
+     *  Get y-loc.
+     */
+    T GetY() const;
 
 private:
-
+    T x;  /**< Cartesian x co-ord of this cell */
+    T y;  /**< Cartesian y co-ord of this cell */
+}
 }
 
 
