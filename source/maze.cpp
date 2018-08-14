@@ -5,11 +5,11 @@
 
 #include <fstream>
 
-Maze::Maze() : width(0), height(0), edgeCount(0), status(LoadStatus::SUCCESS), cells(0)
+Maze::Maze() : width(0), height(0), edgeCount(0), status(LoadStatus::SUCCESS)//, cells(0)
 {
 }
 
-Maze::Maze(const std::string& path) : width(0), height(0), edgeCount(0), status(LoadStatus::SUCCESS), cells(0)
+Maze::Maze(const std::string& path) : width(0), height(0), edgeCount(0), status(LoadStatus::SUCCESS)//, cells(0)
 {
     Load(path);
 }
