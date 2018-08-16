@@ -10,7 +10,7 @@
 
 static constexpr bool LOG_FILE = false; // Should all of this be logged to a log.txt??
 
-void Log(LogLevel logType, const std::string& str, ...)
+void Mazer::Log(LogLevel logType, const std::string& str, ...)
 {
     std::string     msg;
     std::va_list    args;

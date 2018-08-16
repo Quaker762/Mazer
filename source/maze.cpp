@@ -5,21 +5,21 @@
 
 #include <fstream>
 
-Maze::Maze() : width(0), height(0), edgeCount(0), status(LoadStatus::SUCCESS)//, cells(0)
+Mazer::CMaze::CMaze() : width(0), height(0), edgeCount(0), status(LoadStatus::SUCCESS)//, cells(0)
 {
 }
 
-Maze::Maze(const std::string& path) : width(0), height(0), edgeCount(0), status(LoadStatus::SUCCESS)//, cells(0)
+Mazer::CMaze::CMaze(const std::string& path) : width(0), height(0), edgeCount(0), status(LoadStatus::SUCCESS)//, cells(0)
 {
     Load(path);
 }
 
-Maze::~Maze()
+Mazer::CMaze::~CMaze()
 {
 }
 
 // TODO: Refactor me to be void and store LoadStatus inside the class!!!!
-void Maze::Load(const std::string& path)
+void Mazer::CMaze::Load(const std::string& path)
 {
     std::ifstream mapFile;
 
@@ -39,7 +39,7 @@ void Maze::Load(const std::string& path)
     status = LoadStatus::SUCCESS;
 }
 
-const std::string Maze::GetError() const
+const std::string Mazer::CMaze::GetError() const
 {
     switch(status)
     {

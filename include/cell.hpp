@@ -21,7 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  **/
-namespace mazer{
+namespace Mazer{
 
 /**
  *  Cell class. Each square defines a logical (x,y) point on our maze. Each maze is made up

@@ -6,6 +6,11 @@
 
 #include <string>
 
+namespace Mazer{
+
+/**
+ *  Log message severuty
+ */
 enum class LogLevel
 {
     INFO,
@@ -21,6 +26,7 @@ enum class LogLevel
  */
 void Log(LogLevel logType, const std::string& str, ...);
 
+}
 
 
 #endif
