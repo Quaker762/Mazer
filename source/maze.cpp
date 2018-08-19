@@ -2,14 +2,23 @@
  *  Implementation of Maze.hpp
  */
 #include "maze.hpp"
+#include "log.hpp"
 
 #include <fstream>
+#include <algorithm>
 
-Mazer::CMaze::CMaze() : width(0), height(0), edgeCount(0), status(LoadStatus::SUCCESS)//, cells(0)
+Mazer::CMaze::CMaze() : width(0), height(0), edgeCount(0), status(LoadStatus::INVALID_MAZE), cells(false)
 {
+
 }
 
-Mazer::CMaze::CMaze(const std::string& path) : width(0), height(0), edgeCount(0), status(LoadStatus::SUCCESS)//, cells(0)
+Mazer::CMaze::CMaze(int _width, int _height) : width(_width), height(_height), edgeCount(0), status(LoadStatus::INVALID_MAZE), cells(false)
+{
+    cells.resize(width * height);
+    std::fill(cells.begin(), cells.end(), false);
+}
+
+Mazer::CMaze::CMaze(const std::string& path) : width(0), height(0), edgeCount(0), status(LoadStatus::INVALID_MAZE), cells(false)
 {
     Load(path);
 }
@@ -37,6 +46,11 @@ void Mazer::CMaze::Load(const std::string& path)
     mapFile.read(reinterpret_cast<char*>(edgeCount), sizeof(int));      // Count of edges in map
 
     status = LoadStatus::SUCCESS;
+}
+
+void Mazer::CMaze::GenerateMaze(std::uint32_t seed)
+{
+    Mazer::Log(Mazer::LogLevel::INFO, "default seed: 0x%x\n", seed);
 }
 
 const std::string Mazer::CMaze::GetError() const

@@ -19,21 +19,31 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  **/
-#ifndef _CELL_HPP_INCLUDED_
-#define _CELL_HPP_INCLUDED_
+#ifndef _EDGE_HPP_INCLUDED_
+#define _EDGE_HPP_INCLUDED_
 
-namespace Mazer{
+#include "cell.hpp"
+
+namespace Mazer
+{
 
 /**
- *  A cell is a logical (x, y) cartesian co-ordinate in our grid of cells  
+ *  An edge defines a logical connection of two adjacent cells
  */
-struct cell
+struct edge
 {
-    int x;
-    int y;
+    cell c_A;   /**< First cell of this edge */
+    cell c_B;   /**< Second cell of this edge */
 };
 
 
 }
+
+
+
+
+
+
+
 
 #endif

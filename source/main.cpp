@@ -1,10 +1,11 @@
 #include <iostream>
-#include "log.hpp"
+#include "maze.hpp"
 
 int main(int argc, char** argv)
 {
-    std::cout << "Hello, World!\n" << std::endl;
+    Mazer::CMaze maze;
 
-    Mazer::Log(Mazer::LogLevel::INFO, "%d\n", sizeof(std::string));
+    maze.GenerateMaze();
+
     return 0;
 }

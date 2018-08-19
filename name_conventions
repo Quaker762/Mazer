@@ -1,0 +1,4 @@
+Namespaces start with an Uppercase letter
+Structs are all lowercase
+Classes start with a capital 'C'. e.g, CClass, CObject CExample
+

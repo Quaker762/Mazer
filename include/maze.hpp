@@ -27,6 +27,8 @@
 #include <string>
 #include <vector>
 
+#include <cstdint>
+
 namespace Mazer{
 
 class CMaze
@@ -40,11 +42,14 @@ public:
         FATAL_ERROR,
     };
 
+    static constexpr std::uint32_t DEFAULT_SEED = 0xDEADBEEF;
+
 public:
     /**
      *  Class Contructor
      */
     CMaze();
+    CMaze(int width, int height);
     CMaze(const std::string& path);
 
     /*
@@ -52,6 +57,12 @@ public:
      */
     ~CMaze();
 
+    
+    /**
+     *  Generate a new maze using the 'Hunt and Kill Algorithm'.
+     */
+    void GenerateMaze(std::uint32_t seed=DEFAULT_SEED);
+    
     /**
      *  Loads a Maze from disk.
      *
@@ -69,9 +80,9 @@ private:
     int height;                                 /**< Maze Height */
     int edgeCount;                              /**< Number of edges in the maze */
 
-    LoadStatus status;                          /** Load status of this map */
+    LoadStatus status;                          /**< Load status of this map */
 
-//    std::vector<std::vector<edge_t>> cells;    /**< Cell list, each _nested_ vector defines a ROW in the map (cells.at(0) would equate to ROW 0). */
+    std::vector<bool> cells;                    /**< Array desribing which cells we have visited (for generation) */
 };
 }
 
