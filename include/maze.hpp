@@ -49,7 +49,7 @@ public:
      *  Class Contructor
      */
     CMaze();
-    CMaze(int width, int height);
+    CMaze(const int& width, const int& height); // Is it stupid to pass by reference if an int is 32 bits and pointer to the int is 64 bits..?!?!
     CMaze(const std::string& path);
 
     /*
@@ -74,6 +74,20 @@ public:
      *  Get the current load status of this map file and turn it into a human readable string.
      */
     const std::string GetError() const;
+
+private:
+    /**
+     *  Walk the grid by advancing to a random cell left, right, up or down from where we are,
+     *  all the while checking whether they have been visited or not.
+     */
+    bool Walk(const int& start) const;
+
+    /**
+     *  Generate an index in our grid (a one dimensional array) given two co-ords.
+     */
+    int Pos2Offset(const int& x, const int& y) const;
+
+
 
 private:
     int width;                                  /**< Maze Width */
