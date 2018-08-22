@@ -8,19 +8,23 @@
 #include <fstream>
 #include <algorithm>
 #include <random>
+#include <ctime>
+#include <cstdlib>
 
-Mazer::CMaze::CMaze() : width(0), height(0), edgeCount(0), status(LoadStatus::INVALID_MAZE), cells(false)
+static constexpr Mazer::cell INVALID_CELL = Mazer::cell{-1, -1};
+
+Mazer::CMaze::CMaze() : width(0), height(0), edgeCount(0), status(LoadStatus::INVALID_MAZE), cells(false), edges()
 {
 
 }
 
-Mazer::CMaze::CMaze(const int& _width, const int& _height) : width(_width), height(_height), edgeCount(0), status(LoadStatus::INVALID_MAZE), cells(false)
+Mazer::CMaze::CMaze(const int& _width, const int& _height) : width(_width), height(_height), edgeCount(0), status(LoadStatus::INVALID_MAZE), cells(false), edges()
 {
     cells.resize(width * height);
     std::fill(cells.begin(), cells.end(), false);
 }
 
-Mazer::CMaze::CMaze(const std::string& path) : width(0), height(0), edgeCount(0), status(LoadStatus::INVALID_MAZE), cells(false)
+Mazer::CMaze::CMaze(const std::string& path) : width(0), height(0), edgeCount(0), status(LoadStatus::INVALID_MAZE), cells(false), edges()
 {
     Load(path);
 }
@@ -32,6 +36,35 @@ Mazer::CMaze::~CMaze()
 int Mazer::CMaze::Pos2Offset(const int& x, const int& y) const
 {
     return y * width + x;
+}
+
+int Mazer::CMaze::Pos2Offset(const Mazer::cell& c) const
+{
+	return c.y * width + c.x;
+}
+
+std::list<Mazer::cell> Mazer::CMaze::GetNeighbours(const Mazer::cell& c) const
+{
+    std::list<Mazer::cell> list;
+
+    list.push_back(Mazer::cell{c.x-1, c.y}); // Left neighbour
+    list.push_back(Mazer::cell{c.x+1, c.y}); // Right neighbour
+    list.push_back(Mazer::cell{c.x, c.y+1}); // Top neighbour
+    list.push_back(Mazer::cell{c.x, c.y-1}); // Bottom neighbour
+
+    return list;
+}
+
+std::list<Mazer::cell> Mazer::CMaze::GetNeighbours(const int& x, const int& y) const
+{
+    std::list<Mazer::cell> list;
+
+    list.push_back(Mazer::cell{x-1, y}); // Left neighbour
+    list.push_back(Mazer::cell{x+1, y}); // Right neighbour
+    list.push_back(Mazer::cell{x, y+1}); // Top neighbour
+    list.push_back(Mazer::cell{x, y-1}); // Bottom neighbour
+
+    return list;
 }
 
 // TODO: Refactor me to be void and store LoadStatus inside the class!!!!
@@ -57,9 +90,46 @@ void Mazer::CMaze::Load(const std::string& path)
     status = LoadStatus::SUCCESS;
 }
 
-bool Mazer::CMaze::Walk(const int& start) const
+Mazer::cell Mazer::CMaze::Walk(const int& x, const int& y)
 {
+    Mazer::cell         c = Mazer::cell{x, y};
+    std::vector<int>    dirs;
+    std::mt19937        rng;
+    int                 count = 0;
+    //////////////////////////////////////////////////////////
+    
+    // Fill dirs vector
+    dirs.reserve(4);
+    for(unsigned int i = 0; i < 4; i++)
+    {
+        dirs.push_back(i);
+    }
 
+    rng.seed(std::time(nullptr));
+    std::cout << "walking..." << std::endl;
+    do
+    {
+        count++;
+
+        int offset = 0;
+        std::shuffle(dirs.begin(), dirs.end(), rng);
+        int rd = dirs.at(0);
+        Mazer::cell cn = {c.x + dirVals[rd].x, c.y + dirVals[rd].y};
+        
+        offset = Pos2Offset(cn);
+       
+        if(cells.at(offset) != true)
+        {
+            std::cout << "found a cell at " << cn.x << " " << cn.y << std::endl;
+            cells.at(offset) = true;
+            c = cn;
+            count = 0;
+            continue;
+        }   
+    }while(count != 4);
+
+    std::cout << "done!" << std::endl;
+    return c; // This is a cell that is completely boxed in
 }
 
 void Mazer::CMaze::GenerateMaze(std::uint32_t seed)
@@ -85,6 +155,7 @@ void Mazer::CMaze::GenerateMaze(std::uint32_t seed)
     int start = Pos2Offset(startx, starty);
     cells.at(start) = true; // This cell has been visited.. OBVIOUSLY!
 
+    Walk(startx, starty);
 }
 
 void Mazer::CMaze::WriteSVG(const std::string& path)
