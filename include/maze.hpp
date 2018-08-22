@@ -26,8 +26,10 @@
 
 #include <string>
 #include <vector>
-
+#include <list>
 #include <cstdint>
+
+#include "cell.hpp"
 
 namespace Mazer{
 
@@ -80,23 +82,37 @@ private:
      *  Walk the grid by advancing to a random cell left, right, up or down from where we are,
      *  all the while checking whether they have been visited or not.
      */
-    bool Walk(const int& start) const;
+    void Walk(const int& x, const int& y) const;
+
+	/**
+ 	 *	Get a list of neigbours given a position	
+	 */
+	std::list<Mazer::cell> GetNeighbours(const int& x, const int& y) const;
+	std::list<Mazer::cell> GetNeighbours(const Mazer::cell& c) const;	
 
     /**
      *  Generate an index in our grid (a one dimensional array) given two co-ords.
      */
     int Pos2Offset(const int& x, const int& y) const;
-
-
+	int Pos2Offset(const Mazer::cell& c);
+		
 
 private:
-    int width;                                  /**< Maze Width */
-    int height;                                 /**< Maze Height */
-    int edgeCount;                              /**< Number of edges in the maze */
+    int 				width;                                  /**< Maze Width */
+    int 				height;                                 /**< Maze Height */
+    int 				edgeCount;                              /**< Number of edges in the maze */
 
-    LoadStatus status;                          /**< Load status of this map */
+    LoadStatus 			status;                          		/**< Load status of this map */
 
-    std::vector<bool> cells;                    /**< Array desribing which cells we have visited (for generation) */
+    std::vector<bool> 	cells;                    				/**< Array desribing which cells we have visited (for generation) */
+
+	enum Directions
+	{
+		NORTH = 0,
+		EAST,
+		SOUTH,
+		WEST
+	};
 };
 }
 

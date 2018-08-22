@@ -8,6 +8,7 @@
 #include <fstream>
 #include <algorithm>
 #include <random>
+#include <ctime>
 
 Mazer::CMaze::CMaze() : width(0), height(0), edgeCount(0), status(LoadStatus::INVALID_MAZE), cells(false)
 {
@@ -34,6 +35,20 @@ int Mazer::CMaze::Pos2Offset(const int& x, const int& y) const
     return y * width + x;
 }
 
+int Mazer::CMaze::Pos2Offset(const Mazer::cell& c)
+{
+	return c.y * width + c.x;
+}
+
+std::list<Mazer::cell> Mazer::CMaze::GetNeighbours(const Mazer::cell& c) const
+{
+
+}
+
+std::list<Mazer::cell> Mazer::CMaze::GetNeighbours(const int& x, const int& y) const
+{
+}
+
 // TODO: Refactor me to be void and store LoadStatus inside the class!!!!
 void Mazer::CMaze::Load(const std::string& path)
 {
@@ -55,8 +70,12 @@ void Mazer::CMaze::Load(const std::string& path)
     status = LoadStatus::SUCCESS;
 }
 
-bool Mazer::CMaze::Walk(const int& start) const
+void Mazer::CMaze::Walk(const int& x, const int& y) const
 {
+	int xp = x;
+	int yp = y;
+	std::mt19937 rng;
+	rng.seed(std::time(nullptr));	
 
 }
 
