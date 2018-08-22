@@ -71,6 +71,13 @@ public:
     void Load(const std::string& path);
 
     /**
+     *  Writes an SVG from maze.
+     *
+     *  @param path The physical path to the SVG file.
+     */
+    void WriteSVG(const std::string& path);
+
+    /**
      *  Get the current load status of this map file and turn it into a human readable string.
      */
     const std::string GetError() const;
