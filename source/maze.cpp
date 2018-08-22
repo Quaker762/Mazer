@@ -52,6 +52,8 @@ void Mazer::CMaze::Load(const std::string& path)
     mapFile.read(reinterpret_cast<char*>(height), sizeof(int));         // Map height
     mapFile.read(reinterpret_cast<char*>(edgeCount), sizeof(int));      // Count of edges in map
 
+    mapFile.close();
+
     status = LoadStatus::SUCCESS;
 }
 
@@ -84,6 +86,53 @@ void Mazer::CMaze::GenerateMaze(std::uint32_t seed)
     cells.at(start) = true; // This cell has been visited.. OBVIOUSLY!
 
 }
+
+void Mazer::CMaze::WriteSVG(const std::string& path)
+{
+    std::ofstream mapFile;
+
+    // Open a handle to the map file
+    mapFile.open(path);
+
+    if(!mapFile.is_open()) // There was an issue opening a handle to the file
+    {
+        //status = LoadStatus::IO_ERROR;
+        return;
+    }
+
+    mapFile << "<svg viewBox='0 0 1 1' width='500' height='500' xmlns='http://www.w3.org/2000/svg'>\n";
+    mapFile << "\t<rect width='1' height='1' style='fill: black' />\n";
+
+    /*edge e;
+
+    for(int i = 0; i < edge_struct.get_size(); i++)
+    {
+        e[i]; //get from list of edges that Jesse makes
+
+        mapFile << "<\tline stroke='white' stroke-width='0.005'"; 
+
+        mapFile << "x1='"; 
+        mapFile << e.c_A.x;
+
+        mapFile << "' y1='"; 
+        mapFile << e.c_A.y; 
+
+        mapFile << "' x2='";
+        mapFile << e.c_B.x;
+
+        mapFile << "' y2='"; 
+        mapFile << e.c_B.y;
+
+        mapFile<< "'/>\n";
+    }*/
+
+    mapFile << "</svg>";
+
+    mapFile.close();
+
+    //status = LoadStatus::SUCCESS;
+}
+
 
 const std::string Mazer::CMaze::GetError() const
 {
