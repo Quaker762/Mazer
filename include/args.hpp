@@ -31,18 +31,18 @@ namespace Mazer{
 class CArgs{
 
 public:
-	CArgs();
 	CArgs(int argc, char** argv);
 
 private:
-	const std::string ARGV_FAIL = "Input argument failure";
-	const std::string LOAD_BIN = "--lb";
-	const std::string SAVE_BIN = "--sb";
-	const std::string SAVE_SVG = "--sv";
-	const std::string GEN_SEED = "--g";
+	std::vector<std::string>   args;
+	std::uint32_t              seed;
 
-	std::vector<std::string> args;
-	std::uint32_t seed;
+private:
+    const std::string ARGV_FAIL = "Input argument failure";
+    const std::string LOAD_BIN = "--lb";
+    const std::string SAVE_BIN = "--sb";
+    const std::string SAVE_SVG = "--sv";
+    const std::string GEN_SEED = "--g";
 };
 
 }

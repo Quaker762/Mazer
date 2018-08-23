@@ -40,3 +40,4 @@ cmake_install.cmake
 CMakeFiles/*
 Makefile
 log.txt
+build/
