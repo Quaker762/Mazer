@@ -38,7 +38,6 @@ public:
      */
     void Parse() const;
 
-
 private:
 	std::vector<std::string>   args;
 	std::uint32_t              seed;

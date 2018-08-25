@@ -29,6 +29,10 @@ Mazer::CArgs::CArgs(int argc, char** argv) : args(), seed(Mazer::CMaze::DEFAULT_
     args.assign(argv, argv + argc); // Copy all of the data from argv into a more friendly string vector
 }
 
+void Mazer::CArgs::Parse() const
+{
+    
+}
 
 ///// THIS SHOULD PROBABLY BE IN SOME FUNCTION, NOT THE CONSTRUCTOR!!! :^)
     /**
