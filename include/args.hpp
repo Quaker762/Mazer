@@ -33,6 +33,12 @@ class CArgs{
 public:
 	CArgs(int argc, char** argv);
 
+    /**
+     *  Parse all input arguments and dispatch appropriate jobs
+     */
+    void Parse() const;
+
+
 private:
 	std::vector<std::string>   args;
 	std::uint32_t              seed;

@@ -52,7 +52,7 @@ public:
      *  Class Contructor
      */
     CMaze();
-    CMaze(const int& width, const int& height); // Is it stupid to pass by reference if an int is 32 bits and pointer to the int is 64 bits..?!?!
+    CMaze(const int& width, const int& height, const std::uint32_t seed = DEFAULT_SEED); // Is it stupid to pass by reference if an int is 32 bits and pointer to the int is 64 bits..?!?!
     CMaze(const std::string& path);
 
     /*
@@ -64,7 +64,7 @@ public:
     /**
      *  Generate a new maze using the 'Hunt and Kill Algorithm'.
      */
-    void GenerateMaze(std::uint32_t seed=DEFAULT_SEED);
+    void GenerateMaze(const std::uint32_t seed = DEFAULT_SEED);
     
     /**
      *  Loads a Maze from disk.
@@ -91,12 +91,17 @@ private:
      *  all the while checking whether they have been visited or not.
      */
     Mazer::cell Walk(const int& x, const int& y);
+    
+    /**
+     *  Search each row for a cell with at least one unvisited neighbour.
+     */
+    Mazer::cell Hunt(void) const;
 
 	/**
  	 *	Get a list of neigbours given a position	
 	 */
-	std::list<Mazer::cell> GetNeighbours(const int& x, const int& y) const;
-	std::list<Mazer::cell> GetNeighbours(const Mazer::cell& c) const;	
+	std::vector<Mazer::cell> GetNeighbours(const int& x, const int& y) const;
+	std::vector<Mazer::cell> GetNeighbours(const Mazer::cell& c) const;	
 
     /**
      *  Generate an index in our grid (a one dimensional array) given two co-ords.
@@ -110,6 +115,8 @@ private:
     int 				    height;                                 /**< Maze Height */
     int 				    edgeCount;                              /**< Number of edges in the maze */
 
+    std::uint32_t           seed;                                   /**< Seed used to generate this maze */
+    
     LoadStatus 			    status;                          		/**< Load status of this map */
 
     std::vector<bool> 	    cells;                    				/**< Array desribing which cells we have visited (for generation) */

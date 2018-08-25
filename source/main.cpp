@@ -12,9 +12,9 @@ int main(int argc, char** argv)
 {
 	CArgs CArgs(argc, argv);
 
-	//CMaze maze(256, 256);
+	CMaze maze(128, 128);
 
-	//maze.GenerateMaze(std::time(nullptr));
+	maze.GenerateMaze(std::time(nullptr));
 
     return 0;
 }

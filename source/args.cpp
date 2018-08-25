@@ -25,7 +25,6 @@
 
 Mazer::CArgs::CArgs(int argc, char** argv) : args(), seed(Mazer::CMaze::DEFAULT_SEED)
 {
-
     args.reserve(argc); // Reserve 'argc' number of strings in our vector
     args.assign(argv, argv + argc); // Copy all of the data from argv into a more friendly string vector
 }
