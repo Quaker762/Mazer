@@ -10,11 +10,11 @@ using namespace Mazer;
 
 int main(int argc, char** argv)
 {
-	CArgs CArgs(argc, argv);
+	//CArgs CArgs(argc, argv);
 
-	CMaze maze(10, 10);
+	CMaze maze(32, 32);
 
-	maze.GenerateMaze(std::time(nullptr));
+	maze.GenerateMaze();
 
 	maze.WriteSVG("maze.svg");
 

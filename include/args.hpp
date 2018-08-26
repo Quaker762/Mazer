@@ -31,23 +31,35 @@ namespace Mazer{
 class CArgs{
 
 public:
+    CArgs() = delete; // Force constructor 
 	CArgs(int argc, char** argv);
 
     /**
      *  Parse all input arguments and dispatch appropriate jobs
      */
-    void Parse() const;
+    void Parse();
+
+public:
+    enum Operations : int
+    {
+        GENERATE = 0, 
+        SAVE_BIN,
+        LOAD_BIN, 
+        SAVE_SVG
+    };
 
 private:
-	std::vector<std::string>   args;
-	std::uint32_t              seed;
+    int                         argc;
+	std::vector<std::string>    args;
+
+    std::vector<bool>           ops;
 
 private:
     const std::string ARGV_FAIL = "Input argument failure";
-    const std::string LOAD_BIN = "--lb";
-    const std::string SAVE_BIN = "--sb";
-    const std::string SAVE_SVG = "--sv";
-    const std::string GEN_SEED = "--g";
+    const std::string ALOAD_BIN = "--lb";
+    const std::string ASAVE_BIN = "--sb";
+    const std::string ASAVE_SVG = "--sv";
+    const std::string AGEN_SEED = "--g";
 };
 
 }

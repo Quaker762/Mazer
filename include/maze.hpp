@@ -28,6 +28,7 @@
 #include <vector>
 #include <list>
 #include <cstdint>
+#include <ctime>
 
 #include "cell.hpp"
 #include "edge.hpp"
@@ -52,7 +53,7 @@ public:
      *  Class Contructor
      */
     CMaze();
-    CMaze(const int& width, const int& height, const std::uint32_t seed = DEFAULT_SEED); // Is it stupid to pass by reference if an int is 32 bits and pointer to the int is 64 bits..?!?!
+    CMaze(const int& width, const int& height, const std::uint32_t seed = std::time(nullptr)); // Is it stupid to pass by reference if an int is 32 bits and pointer to the int is 64 bits..?!?!
     CMaze(const std::string& path);
 
     /*
@@ -64,7 +65,7 @@ public:
     /**
      *  Generate a new maze using the 'Hunt and Kill Algorithm'.
      */
-    void GenerateMaze(const std::uint32_t seed = DEFAULT_SEED);
+    void GenerateMaze();
     
     /**
      *  Loads a Maze from disk.
@@ -95,7 +96,7 @@ private:
     /**
      *  Search each row for a cell with at least one unvisited neighbour.
      */
-    Mazer::cell Hunt(void) const;
+    Mazer::cell Hunt(void);
 
 	/**
  	 *	Get a list of neigbours given a position	

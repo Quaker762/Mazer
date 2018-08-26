@@ -23,15 +23,43 @@
 #include "maze.hpp"
 #include "log.hpp"
 
-Mazer::CArgs::CArgs(int argc, char** argv) : args(), seed(Mazer::CMaze::DEFAULT_SEED)
+#include <algorithm>
+#include <cstdint>
+#include <cctype>
+#include <iostream>
+
+static Mazer::CMaze maze;
+
+/**
+ *  Returns non-zero if value is a valid number/hex number
+ */
+static bool IsNumber(const std::string& arg)
+{
+    return !arg.empty() && std::find_if(arg.begin(), arg.end(), [](char c){return !std::isxdigit(c); }) == arg.end();
+}
+
+Mazer::CArgs::CArgs(int _argc, char** argv) : argc(_argc), args(), ops(false) 
 {
     args.reserve(argc); // Reserve 'argc' number of strings in our vector
     args.assign(argv, argv + argc); // Copy all of the data from argv into a more friendly string vector
+    ops.resize(3);
 }
 
-void Mazer::CArgs::Parse() const
+// 
+void Mazer::CArgs::Parse()
 {
-    
+    // Walk the arguments list
+    for(std::size_t i = 0; i < args.size(); i++)
+    {
+        std::string arg = args.at(i); // Get current argument
+        
+        if(arg == AGEN_SEED)
+        {
+            ops.at(Operations::GENERATE) = true;
+            //if(IsNumber(args.at(i+1)))
+                //maze.SetSeed(std::stoi(args.at(i+1)));
+        }
+    }
 }
 
 ///// THIS SHOULD PROBABLY BE IN SOME FUNCTION, NOT THE CONSTRUCTOR!!! :^)
