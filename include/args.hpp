@@ -39,6 +39,13 @@ public:
      */
     void Parse();
 
+
+private:
+    /**
+     *  Dispatch all jobs.
+     */
+    void Dispatch() const;
+
 public:
     enum Operations : int
     {
@@ -49,10 +56,19 @@ public:
     };
 
 private:
-    int                         argc;
-	std::vector<std::string>    args;
+    int                         argc;       /**< Number of command line args passed to program */
+	std::vector<std::string>    args;       /**<  Safer, c++ arguments vector */ 
 
-    std::vector<bool>           ops;
+    std::string                 binPath;    /**< Binary Save/Load path */
+    std::string                 svgPath;    /**< SVG save path */
+
+    std::vector<bool>           ops;        /**< State operations list */
+
+    // Maze related vars
+    int                         width;      /**< Maze width */
+    int                         height;     /**< Maze height */
+    std::uint32_t               seed;       /**< Maze seed */
+    bool                        genNoArgs;  /**< Were any generation arguments passed? */
 
 private:
     const std::string ARGV_FAIL = "Input argument failure";

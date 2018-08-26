@@ -25,10 +25,10 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstdlib>
 #include <cctype>
 #include <iostream>
-
-static Mazer::CMaze maze;
+#include <memory>
 
 /**
  *  Returns non-zero if value is a valid number/hex number
@@ -38,16 +38,30 @@ static bool IsNumber(const std::string& arg)
     return !arg.empty() && std::find_if(arg.begin(), arg.end(), [](char c){return !std::isxdigit(c); }) == arg.end();
 }
 
-Mazer::CArgs::CArgs(int _argc, char** argv) : argc(_argc), args(), ops(false) 
+Mazer::CArgs::CArgs(int _argc, char** argv) : argc(_argc), args(), binPath(""), svgPath(""), ops(false), width(0), height(0), seed(0), genNoArgs(false)
 {
     args.reserve(argc); // Reserve 'argc' number of strings in our vector
     args.assign(argv, argv + argc); // Copy all of the data from argv into a more friendly string vector
-    ops.resize(3);
+    ops.resize(4);
 }
 
-// 
 void Mazer::CArgs::Parse()
 {
+    using namespace Mazer;
+
+    if(argc <= 1)
+    {
+        std::cout << "Mazer! By Jesse Buhagiar and Timothy Davis" << std::endl << std::endl;
+        std::cout << "Usage:" << std::endl;
+        std::cout << " mazer --g [seed] [width height] --sb [path] --sv [path] --lb [path]" << std::endl << std::endl;
+        std::cout << "Options:" << std::endl;
+        std::cout << "--g\t\tGenerate maze (with optional seed, and dimensions)" << std::endl;
+        std::cout << "--sb\t\tSave generated maze to .maze binary file" << std::endl;
+        std::cout << "--sv\t\tSave generated maze to a .svg file" << std::endl;
+        std::cout << "--lb\t\tLoad pre-generated binary file from disk" << std::endl;
+        std::exit(0);
+    }
+
     // Walk the arguments list
     for(std::size_t i = 0; i < args.size(); i++)
     {
@@ -56,72 +70,153 @@ void Mazer::CArgs::Parse()
         if(arg == AGEN_SEED)
         {
             ops.at(Operations::GENERATE) = true;
-            //if(IsNumber(args.at(i+1)))
-                //maze.SetSeed(std::stoi(args.at(i+1)));
-        }
-    }
-}
 
-///// THIS SHOULD PROBABLY BE IN SOME FUNCTION, NOT THE CONSTRUCTOR!!! :^)
-    /**
-    for(int i = 0; i < argc; i++)
-    {
-        args.push_back(argv[i]);
-    }
-
-    if(args[1] == LOAD_BIN)
-    {
-        CMaze maze(args[2]); //loads maze from filename
-
-        if(args[3] == SAVE_BIN)
-        {
-            //save bin here
-        }
-        
-        else if(args[3] == SAVE_SVG)
-        {
-            maze.WriteSVG(args[4]);
-        }
-    }
-
-    if(args[1] == GEN_SEED)
-    {
-        CMaze maze;
-
-        std::size_t seed;
-
-        int iSeed = std::stoi(args[2], &seed);
-
-        maze.GenerateMaze(static_cast<std::uint32_t>(iSeed)); //generate maze from seed
-
-        if(args[3] == SAVE_BIN)
-        {
-            //save bin here
-
-            if(args[5] == SAVE_SVG)
+            if(args.size() <= 4)
             {
-                maze.WriteSVG(args[6]);
+                std::cout << "You can't just generate without doing anything!" << std::endl;
+                std::exit(-1);
+            }
+            else
+            {
+                if(!IsNumber(args.at(i+1)) && !IsNumber(args.at(i+2)) && !IsNumber(args.at(i+3)))
+                {
+                    genNoArgs = true;
+                }
+
+                if(!IsNumber(args.at(i+3))) // User didn't pass seed to program
+                {
+                    width = std::stoi(args.at(i+1));
+                    height = std::stoi(args.at(i+2));
+                }
+                else
+                {
+                    seed = std::stol(args.at(i+1), nullptr, 16);
+                    width = std::stol(args.at(i+2));
+                    height = std::stol(args.at(i+3));
+                }
             }
         }
-
-        else if(args[3] == SAVE_SVG)
+        else if(arg == ALOAD_BIN)
         {
-            maze.WriteSVG(args[4]);
+            ops.at(Operations::LOAD_BIN) = true;
+            binPath = args.at(i+1);
+            continue;
+        }
+        else if(arg == ASAVE_BIN)
+        {
+            if(ops.at(Operations::GENERATE) != true)
+            {
+                Log(LogLevel::FATAL, "Error: You didn't specify maze generation first!\n");
+                std::exit(-1);
+            }
+
+            ops.at(Operations::SAVE_BIN) = true;
+            binPath = args.at(i+1);
+        }
+        else if(arg == ASAVE_SVG)
+        {
+            ops.at(Operations::SAVE_SVG) = true;
+            svgPath = args.at(i+1);
+        }
+    }
+
+    // Do some checks to make sure the user hasn't done anything stupid!
+    if(ops.at(Operations::LOAD_BIN) == true && ops.at(Operations::SAVE_BIN) == true)
+    {
+        Log(LogLevel::FATAL, "You can't save and load a binary at the same time!!!\n");
+        std::exit(-1);
+    }
+
+    if(ops.at(Operations::LOAD_BIN) == true && ops.at(Operations::SAVE_SVG) == false)
+    {
+        Log(LogLevel::FATAL, "You can't load a binary file without saving it!!\n");
+        std::exit(-1);
+    }
+
+    if(ops.at(Operations::GENERATE) == true && ops.at(Operations::LOAD_BIN) == true)
+    {
+        Log(LogLevel::FATAL, "You can't generate and load a maze at the same time!!!\n");
+        std::exit(-1);
+    }
+
+    Dispatch();
+}
+
+void Mazer::CArgs::Dispatch() const
+{
+    using namespace Mazer;
+
+    // Nice hack to use different constructors ;)
+    std::unique_ptr<CMaze> maze;
+
+    if(ops.at(Operations::GENERATE))
+    {
+        std::cout << "Generating Maze..." << std::endl;
+        std::flush(std::cout);
+        if(seed == 0)
+        {
+            std::cout << "No seed provided! Using default: " << std::hex << std::time(nullptr) << std::endl;
+        }
+
+        maze = std::make_unique<CMaze>(width, height, seed);
+        maze.get()->GenerateMaze();
+        std::cout << "Done!" << std::endl;
+
+        if(ops.at(Operations::SAVE_BIN))
+        {
+            std::cout << "Writing maze to disk..." << std::endl;
+            std::flush(std::cout);
+            maze.get()->WriteBinary(binPath);
+            std::cout << "Done!" << std::endl;
+        }
+
+        if(ops.at(Operations::SAVE_SVG))
+        {
+            std::cout << "Writing svg to disk..." << std::endl;
+            maze.get()->WriteSVG(svgPath);
+
+            if(maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS)
+            {
+                std::string err = maze.get()->GetError();
+                Log(LogLevel::FATAL, "Unable to write SVG! Reason: %s\n", err.c_str());
+                std::exit(-1);
+            }
+            else
+            {
+                std::cout << "Done!" << std::endl;
+            }
+        }
+    }
+
+    if(ops.at(Operations::LOAD_BIN))
+    {
+        std::cout << "Loading maze from disk..." << std::endl;
+        maze = std::make_unique<CMaze>(binPath);
+        if(maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS)
+        {
+            std::string err = maze.get()->GetError();
+            Log(LogLevel::FATAL, "Unable to read binary file! Reason: %s\n", err.c_str());
+            std::exit(-1);
         }
         else
         {
-            std::size_t width;
-            std::size_t height;
-
-            int iWidth = std::stoi(args[3], &width);
-            int iHeight = std::stoi(args[4], &height);
-
-            CMaze maze(iWidth, iHeight);
+            std::cout << "Done!" << std::endl;
         }
 
+        if(ops.at(Operations::SAVE_SVG))
+        {
+            std::cout << "Writing svg to disk..." << std::endl;
+            maze.get()->WriteSVG(svgPath);
+            if(maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS)
+            {
+                std::string err = maze.get()->GetError();
+                Log(LogLevel::FATAL, "Unable to write SVG! Reason: %s\n", err.c_str());
+                std::exit(-1);
+            }
+            else
+            {
+                std::cout << "Done!" << std::endl;
+            }
+        }
     }
-    else
-    {
-        std::cout << ARGV_FAIL << std::endl;
-    }
-    **/
+}

@@ -19,25 +19,50 @@ static constexpr Mazer::cell INVALID_CELL = Mazer::cell{-1, -1};
 
 static std::mt19937 rng;
 
-Mazer::CMaze::CMaze() : width(0), height(0), edgeCount(0), seed(DEFAULT_SEED), status(LoadStatus::INVALID_MAZE), cells(false), edges()
-{
-
-}
-
-Mazer::CMaze::CMaze(const int& _width, const int& _height, const std::uint32_t _seed) : width(_width), height(_height), edgeCount(0), seed(_seed), status(LoadStatus::INVALID_MAZE), cells(false), edges()
+Mazer::CMaze::CMaze(const int& _width, const int& _height, const std::uint32_t _seed) : width(_width), height(_height), seed(_seed), status(LoadStatus::INVALID_MAZE), cells(false), edges()
 {
     cells.resize(width * height);
     std::fill(cells.begin(), cells.end(), false);
     rng.seed(seed);
 }
 
-Mazer::CMaze::CMaze(const std::string& path) : width(0), height(0), edgeCount(0), seed(0), status(LoadStatus::INVALID_MAZE), cells(false), edges()
+Mazer::CMaze::CMaze(const std::string& path) : width(0), height(0), seed(0), status(LoadStatus::INVALID_MAZE), cells(false), edges()
 {
-    Load(path);
+    LoadBinary(path);
 }
 
 Mazer::CMaze::~CMaze()
 {
+}
+
+void Mazer::CMaze::SetWidth(const int _width)
+{
+    width = _width;
+}
+
+void Mazer::CMaze::SetHeight(const int _height)
+{
+    height = _height;
+}
+
+void Mazer::CMaze::SetSeed(const int _seed)
+{
+    seed = _seed;
+}
+
+const int& Mazer::CMaze::GetHeight() const
+{
+    return height;
+}
+
+const int& Mazer::CMaze::GetWidth() const
+{
+    return width;
+}
+
+const std::uint32_t& Mazer::CMaze::GetSeed() const
+{
+    return seed;
 }
 
 int Mazer::CMaze::Pos2Offset(const int& x, const int& y) const
@@ -82,10 +107,39 @@ std::vector<Mazer::cell> Mazer::CMaze::GetNeighbours(const int& x, const int& y)
     return list;
 }
 
+void Mazer::CMaze::WriteBinary(const std::string& path)
+{
+    std::ofstream mapFile;
+
+    mapFile.open(path, std::ios::binary | std::ios::out);
+    if(!mapFile.is_open())
+    {
+        status = LoadStatus::IO_ERROR;
+        return;
+    }
+
+    std::uint32_t sz = edges.size();
+    mapFile.write(reinterpret_cast<char*>(&width), sizeof(std::uint32_t));
+    mapFile.write(reinterpret_cast<char*>(&height), sizeof(std::uint32_t));
+    mapFile.write(reinterpret_cast<char*>(&sz), sizeof(std::uint32_t));
+
+    for(std::list<Mazer::edge>::iterator it = edges.begin(); it != edges.end(); ++it)
+    {
+        Mazer::edge e = *it;
+
+        mapFile.write(reinterpret_cast<char*>(&e.c_A.x), sizeof(std::uint32_t));
+        mapFile.write(reinterpret_cast<char*>(&e.c_A.y), sizeof(std::uint32_t));
+        mapFile.write(reinterpret_cast<char*>(&e.c_B.x), sizeof(std::uint32_t));
+        mapFile.write(reinterpret_cast<char*>(&e.c_B.y), sizeof(std::uint32_t));
+    }
+}
+
 // TODO: Refactor me to be void and store LoadStatus inside the class!!!!
-void Mazer::CMaze::Load(const std::string& path)
+void Mazer::CMaze::LoadBinary(const std::string& path)
 {
     std::ifstream mapFile;
+    std::size_t edgeCount = 0;
+    std::size_t i = 0;
 
     // Open a handle to the map file
     mapFile.open(path, std::ios::binary);
@@ -96,9 +150,38 @@ void Mazer::CMaze::Load(const std::string& path)
     }
 
     // We can now actually read the binary file into our class
-    mapFile.read(reinterpret_cast<char*>(width), sizeof(int));          // Map width
-    mapFile.read(reinterpret_cast<char*>(height), sizeof(int));         // Map height
-    mapFile.read(reinterpret_cast<char*>(edgeCount), sizeof(int));      // Count of edges in map
+    mapFile.read(reinterpret_cast<char*>(&width), sizeof(std::uint32_t));            // Map width
+    mapFile.read(reinterpret_cast<char*>(&height), sizeof(std::uint32_t));           // Map height
+    mapFile.read(reinterpret_cast<char*>(&edgeCount), sizeof(std::uint32_t));        // Count of edges in map
+
+    for(i = 0; i < edgeCount; i++)
+    {
+        Mazer::edge e;
+
+        mapFile.read(reinterpret_cast<char*>(&e.c_A.x), sizeof(std::uint32_t));
+        mapFile.read(reinterpret_cast<char*>(&e.c_A.y), sizeof(std::uint32_t));
+        mapFile.read(reinterpret_cast<char*>(&e.c_B.x), sizeof(std::uint32_t));
+        mapFile.read(reinterpret_cast<char*>(&e.c_B.y), sizeof(std::uint32_t));
+
+        if(e.c_A.x < 0 || e.c_A.y < 0 || e.c_A.x > width || e.c_A.y > height)
+        {
+            Mazer::Log(Mazer::LogLevel::FATAL, "Dimension outside boundary!\n");
+            std::cout << "\te.c_A.x: " << e.c_A.x << std::endl;
+            std::cout << "\te.c_A.y: " << e.c_A.y << std::endl;
+            std::cout << "\te.c_B.x: " << e.c_B.x << std::endl;
+            std::cout << "\te.c_B.y: " << e.c_B.y << std::endl;
+        }
+
+        edges.push_back(e);
+    }
+
+    // We didn't read enough edges! This file is probably corrupt!
+    if(i != edgeCount)
+    {
+        Mazer::Log(Mazer::LogLevel::FATAL, "edgesRead < edgeCount! Aborting...\n");
+        status = LoadStatus::INVALID_MAZE;
+        std::abort();
+    }
 
     mapFile.close();
 
@@ -299,15 +382,19 @@ void Mazer::CMaze::GenerateMaze()
     Mazer::Log(Mazer::LogLevel::INFO, "Done Generating maze! Post check, please wait...\n");
     for(std::size_t i = 0; i < cells.size(); i++)
     {
-        std::cout << ".";
-        std::flush(std::cout);
+        if((i % 8) == 0)
+        {
+            std::cout << "." << "" << std::flush;  
+        }
+
         if(cells.at(i) == false)
         {
             Mazer::Log(Mazer::LogLevel::FATAL, "FATAL! Unvisited cell at : \n");
             break;
         }
     }
-    Mazer::Log(Mazer::LogLevel::INFO, "Done!\n");
+    std::cout << std::endl;
+    //Mazer::Log(Mazer::LogLevel::INFO, "Done!\n");
 }
 
 void Mazer::CMaze::WriteSVG(const std::string& path)
@@ -319,7 +406,7 @@ void Mazer::CMaze::WriteSVG(const std::string& path)
 
     if(!mapFile.is_open()) // There was an issue opening a handle to the file
     {
-        //status = LoadStatus::IO_ERROR;
+        status = LoadStatus::IO_ERROR;
         return;
     }
 
@@ -351,7 +438,7 @@ void Mazer::CMaze::WriteSVG(const std::string& path)
 
     mapFile.close();
 
-    //status = LoadStatus::SUCCESS;
+    status = LoadStatus::SUCCESS;
 }
 
 

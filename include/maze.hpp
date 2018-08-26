@@ -52,8 +52,8 @@ public:
     /**
      *  Class Contructor
      */
-    CMaze();
-    CMaze(const int& width, const int& height, const std::uint32_t seed = std::time(nullptr)); // Is it stupid to pass by reference if an int is 32 bits and pointer to the int is 64 bits..?!?!
+    CMaze() = delete;
+    CMaze(const int& width = 64, const int& height = 64, const std::uint32_t seed = std::time(nullptr)); // Is it stupid to pass by reference if an int is 32 bits and pointer to the int is 64 bits..?!?!
     CMaze(const std::string& path);
 
     /*
@@ -61,18 +61,52 @@ public:
      */
     ~CMaze();
 
+    /**
+     *  Set the width of this maze
+     */
+    void SetWidth(const int width);
+
+    /**
+     *  Set the height of this maze
+     */
+    void SetHeight(const int height);
+
+    /**
+     *  Set the generation seed of this maze
+     */
+    void SetSeed(const int seed);
+
+    /**
+     *  Get the height of the maze
+     */
+    const int& GetHeight() const;
+
+    /**
+     *  Get the width of the maze
+     */
+    const int& GetWidth() const;
+
+    /**
+     *  Get the seed that was used to generate this maze
+     */
+    const std::uint32_t& GetSeed() const;
     
     /**
      *  Generate a new maze using the 'Hunt and Kill Algorithm'.
      */
     void GenerateMaze();
+
+    /**
+     *  Save this maze as a .maze binary file
+     */
+    void WriteBinary(const std::string& path);
     
     /**
      *  Loads a Maze from disk.
      *
      *  @param path The physical path to the maze binary file.
      */
-    void Load(const std::string& path);
+    void LoadBinary(const std::string& path);
 
     /**
      *  Writes an SVG from maze.
@@ -80,6 +114,11 @@ public:
      *  @param path The physical path to the SVG file.
      */
     void WriteSVG(const std::string& path);
+
+    /**
+     *  Get the load status of an IO operation.
+     */
+    LoadStatus GetStatus() const{return status;}
 
     /**
      *  Get the current load status of this map file and turn it into a human readable string.
@@ -114,7 +153,6 @@ private:
 private:
     int 				    width;                                  /**< Maze Width */
     int 				    height;                                 /**< Maze Height */
-    int 				    edgeCount;                              /**< Number of edges in the maze */
 
     std::uint32_t           seed;                                   /**< Seed used to generate this maze */
     

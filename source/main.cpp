@@ -10,13 +10,8 @@ using namespace Mazer;
 
 int main(int argc, char** argv)
 {
-	//CArgs CArgs(argc, argv);
-
-	CMaze maze(32, 32);
-
-	maze.GenerateMaze();
-
-	maze.WriteSVG("maze.svg");
+	CArgs args(argc, argv);
+    args.Parse();
 
 	return 0;
 }
