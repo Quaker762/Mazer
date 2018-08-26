@@ -11,6 +11,8 @@
 #include <ctime>
 #include <cstdlib>
 
+#define _DEBUG_
+
 static constexpr Mazer::cell INVALID_CELL = Mazer::cell{-1, -1};
 
 Mazer::CMaze::CMaze() : width(0), height(0), edgeCount(0), seed(DEFAULT_SEED), status(LoadStatus::INVALID_MAZE), cells(false), edges()
@@ -113,7 +115,7 @@ Mazer::cell Mazer::CMaze::Walk(const int& x, const int& y)
         dirs.push_back(i);
     }
 
-    rng.seed(std::time(nullptr));
+    rng.seed(seed);
     #ifdef _DEBUG_
     std::cout << "walking..." << std::endl;
     #endif
@@ -173,7 +175,9 @@ Mazer::cell Mazer::CMaze::Hunt(void) const
     std::mt19937 rng;
     int off = 0;
 
-    //std::cout << "Hunting..." << std::endl;
+    #ifdef _DEBUG_
+    std::cout << "Hunting..." << std::endl;
+    #endif
     rng.seed(seed);
     for(int y = 0; y < height; y++)
     {
@@ -182,7 +186,7 @@ Mazer::cell Mazer::CMaze::Hunt(void) const
             off = Pos2Offset(x, y);
             if(cells.at(off) == true) 
             {
-               // Do nothing, we only want to check unvisited cells. 
+               continue;
             }
             else
             {    
@@ -199,8 +203,10 @@ Mazer::cell Mazer::CMaze::Hunt(void) const
                         continue;
                     
                     int o = Pos2Offset(c.x, c.y);
-                    if(cells.at(o) != true) // This cell is unvisited! Return it so we can go there next walk!
+                    if(cells.at(o) == true) // This cell has a visited neighbour! We'll go there next walk
                     {
+                        c.x = x;
+                        c.y = y;
                         goto end;
                     }
                 }
