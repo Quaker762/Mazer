@@ -1,6 +1,9 @@
 /**
  *  Implementation of Maze.hpp
  */
+
+#define _DEBUG_
+
 #include "maze.hpp"
 #include "log.hpp"
 
@@ -278,28 +281,26 @@ void Mazer::CMaze::WriteSVG(const std::string& path)
     mapFile << "<svg viewBox='0 0 1 1' width='500' height='500' xmlns='http://www.w3.org/2000/svg'>\n";
     mapFile << "\t<rect width='1' height='1' style='fill: black' />\n";
 
-    /*edge e;
-
-    for(int i = 0; i < edge_struct.get_size(); i++)
+    for(std::list<Mazer::edge>::iterator it = edges.begin(); it != edges.end(); ++it)
     {
-        e[i]; //get from list of edges that Jesse makes
+        Mazer::edge e = *it;
 
-        mapFile << "<\tline stroke='white' stroke-width='0.005'"; 
+        mapFile << "\t<line stroke='white' stroke-width='0.005' "; 
 
         mapFile << "x1='"; 
-        mapFile << e.c_A.x;
+        mapFile << static_cast<double>(e.c_A.x)/width;
 
         mapFile << "' y1='"; 
-        mapFile << e.c_A.y; 
+        mapFile << static_cast<double>(e.c_A.y)/width; 
 
         mapFile << "' x2='";
-        mapFile << e.c_B.x;
+        mapFile << static_cast<double>(e.c_B.x)/width;
 
         mapFile << "' y2='"; 
-        mapFile << e.c_B.y;
+        mapFile << static_cast<double>(e.c_B.y)/width;
 
         mapFile<< "'/>\n";
-    }*/
+    }
 
     mapFile << "</svg>";
 

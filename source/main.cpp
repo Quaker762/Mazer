@@ -12,11 +12,13 @@ int main(int argc, char** argv)
 {
 	CArgs CArgs(argc, argv);
 
-	CMaze maze(128, 128);
+	CMaze maze(10, 10);
 
 	maze.GenerateMaze(std::time(nullptr));
 
-    return 0;
+	maze.WriteSVG("maze.svg");
+
+	return 0;
 }
 
 
