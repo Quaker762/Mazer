@@ -11,12 +11,13 @@
 #include <fstream>
 #include <algorithm>
 #include <random>
-#include <ctime>
 #include <cstdlib>
 
-#define _DEBUG_
+#undef _DEBUG_
 
 static constexpr Mazer::cell INVALID_CELL = Mazer::cell{-1, -1};
+
+static std::mt19937 rng;
 
 Mazer::CMaze::CMaze() : width(0), height(0), edgeCount(0), seed(DEFAULT_SEED), status(LoadStatus::INVALID_MAZE), cells(false), edges()
 {
@@ -27,6 +28,7 @@ Mazer::CMaze::CMaze(const int& _width, const int& _height, const std::uint32_t _
 {
     cells.resize(width * height);
     std::fill(cells.begin(), cells.end(), false);
+    rng.seed(seed);
 }
 
 Mazer::CMaze::CMaze(const std::string& path) : width(0), height(0), edgeCount(0), seed(0), status(LoadStatus::INVALID_MAZE), cells(false), edges()
@@ -109,7 +111,7 @@ Mazer::cell Mazer::CMaze::Walk(const int& x, const int& y)
 
     Mazer::cell         c = Mazer::cell{x, y};
     std::vector<int>    dirs;
-    std::mt19937        rng;
+    //std::mt19937        rng;
     //////////////////////////////////////////////////////////
     
     // Fill dirs vector
@@ -119,7 +121,6 @@ Mazer::cell Mazer::CMaze::Walk(const int& x, const int& y)
         dirs.push_back(i);
     }
 
-    rng.seed(seed);
     #ifdef _DEBUG_
     std::cout << "walking..." << std::endl;
     #endif
@@ -175,28 +176,7 @@ Mazer::cell Mazer::CMaze::Walk(const int& x, const int& y)
         }
     }while(!dirs.empty());
 
-    // Make sure we join any previous walk paths
-    if(count > 0)
-    {
-        std::vector<Mazer::cell> neighbours;
 
-        neighbours = GetNeighbours(c);
-        for(std::size_t i = 0; i < neighbours.size(); i++)
-        {
-            if(cells.at(Pos2Offset(neighbours.at(i))))
-            {
-                #ifdef _DEBUG_
-                std::cout << "HACK HACK! Found adjacent path! Connecting..." << std::endl;
-                #endif
-
-                Mazer::edge e;
-                e.c_A = c;
-                e.c_B = neighbours.at(i);
-                edges.push_back(e);
-                break;
-            }
-        }
-    }
 
     #ifdef _DEBUG_
     std::cout << "done!" << std::endl;
@@ -208,16 +188,15 @@ Mazer::cell Mazer::CMaze::Walk(const int& x, const int& y)
 }
 
 
-Mazer::cell Mazer::CMaze::Hunt(void) const
+Mazer::cell Mazer::CMaze::Hunt(void)
 {
     Mazer::cell c = INVALID_CELL;
-    std::mt19937 rng;
+    //std::mt19937 rng;
     int off = 0;
 
     #ifdef _DEBUG_
     std::cout << "Hunting..." << std::endl;
     #endif
-    rng.seed(seed);
     for(int y = 0; y < height; y++)
     {
         for(int x = 0; x < width; x++)
@@ -257,17 +236,40 @@ end:
     #ifdef _DEBUG_
     std::cout << "Finished hunting! Found a cell at " << c.x << " " << c.y << std::endl;
     #endif
+
+    std::vector<Mazer::cell> neighbours = GetNeighbours(c);
+    for(;;)
+    {
+        std::shuffle(neighbours.begin(), neighbours.end(), rng);
+        Mazer::cell cj = neighbours.at(0);
+
+        if(c.x == -1 || c.y == -1)
+            break;
+        
+        if(cells.at(Pos2Offset(cj.x, cj.y)) == true)
+        {
+            #ifdef _DEBUG_
+            std::cout << "HACK HACK! Creating edge on hunt!" << std::endl;
+            #endif
+
+            Mazer::edge e;
+            e.c_A = c;
+            e.c_B = neighbours.at(0);
+            edges.push_back(e);
+            break;
+        }
+    }
+
     return c;
 }
 
-void Mazer::CMaze::GenerateMaze(std::uint32_t seed)
+void Mazer::CMaze::GenerateMaze()
 {
     #ifdef _DEBUG_
     Mazer::Log(Mazer::LogLevel::INFO, "generation seed: 0x%x\n", seed);
     #endif
     
-    std::mt19937 rng;
-    rng.seed(seed);
+    //std::mt19937 rng;
     Mazer::cell c;
     std::uniform_int_distribution<std::mt19937::result_type> x_rng(0, width - 1);
     std::uniform_int_distribution<std::mt19937::result_type> y_rng(0, height - 1);
