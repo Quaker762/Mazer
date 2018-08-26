@@ -105,10 +105,11 @@ void Mazer::CMaze::Load(const std::string& path)
 
 Mazer::cell Mazer::CMaze::Walk(const int& x, const int& y)
 {
+    static int count = 0;
+
     Mazer::cell         c = Mazer::cell{x, y};
     std::vector<int>    dirs;
     std::mt19937        rng;
-    int                 count = 0;
     //////////////////////////////////////////////////////////
     
     // Fill dirs vector
@@ -128,17 +129,16 @@ Mazer::cell Mazer::CMaze::Walk(const int& x, const int& y)
     cells.at(Pos2Offset(x, y)) = true;
     do
     {
-        count++;
-
         int offset = 0;
         std::shuffle(dirs.begin(), dirs.end(), rng);
         int rd = dirs.at(0);
         Mazer::cell cn = {c.x + dirVals[rd].x, c.y + dirVals[rd].y};
-       
+        
         // Definitely out of bounds, no segfault/outofrange for us, thanks! :^)
         if(cn.x < 0 || cn.x >= width || cn.y < 0 || cn.y >= height)
         {
             cn = {x, y}; // This could be some kind of operator overloading of '=', but this is much cleaner, and keeps cn as a pure struct.
+            dirs.erase(dirs.begin());
             continue;
         }
 
@@ -155,22 +155,58 @@ Mazer::cell Mazer::CMaze::Walk(const int& x, const int& y)
             e.c_B = cn;
             
             #ifdef _DEBUG_
-                std::cout << "Creating an edge between (" << e.c_A.x << ", " << e.c_A.y << ") and " << e.c_B.x << ", " << e.c_B.y << ")" << std::endl;
+                //std::cout << "Creating an edge between (" << e.c_A.x << ", " << e.c_A.y << ") and " << e.c_B.x << ", " << e.c_B.y << ")" << std::endl;
             #endif
 
             edges.push_back(e);
             c = cn;
-            count = 0;
+            //count = 0;
+
+            // New cell, so we refill the dirs vector
+            dirs.resize(4);
+            for(unsigned int i = 0; i < 4; i++)
+                dirs.at(i) = i;
+
             continue;
-        }   
-    }while(count != 4);
+        }
+        else
+        {
+            dirs.erase(dirs.begin());
+        }
+    }while(!dirs.empty());
+
+    // Make sure we join any previous walk paths
+    if(count > 0)
+    {
+        std::vector<Mazer::cell> neighbours;
+
+        neighbours = GetNeighbours(c);
+        for(std::size_t i = 0; i < neighbours.size(); i++)
+        {
+            if(cells.at(Pos2Offset(neighbours.at(i))))
+            {
+                #ifdef _DEBUG_
+                std::cout << "HACK HACK! Found adjacent path! Connecting..." << std::endl;
+                #endif
+
+                Mazer::edge e;
+                e.c_A = c;
+                e.c_B = neighbours.at(i);
+                edges.push_back(e);
+                break;
+            }
+        }
+    }
 
     #ifdef _DEBUG_
     std::cout << "done!" << std::endl;
     #endif
 
+    count++;
+
     return c; // This is a cell that is completely boxed in
 }
+
 
 Mazer::cell Mazer::CMaze::Hunt(void) const
 {
@@ -250,6 +286,7 @@ void Mazer::CMaze::GenerateMaze(std::uint32_t seed)
     
     c.x = startx;
     c.y = starty;
+    std::vector<Mazer::cell> nei;
     while(c.x != -1 && c.y != -1)
     {
         Walk(c.x, c.y);
