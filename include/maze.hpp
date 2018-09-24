@@ -55,18 +55,24 @@ public:
         FATAL_ERROR
     };
 
+/**
+ *  The burden of construction is now on the derived class!!! This class _cannot_ be instantiated, else
+ *  the compiler will have a tantrum and throw an error!
+ */
+protected:
     /**
      *  Default constructor
      */
     CMaze() = delete;
-    explicit CMaze(const int& width = 64, const int& height = 64, const std::uint32_t& seed = std::time(nullptr)) = 0;
-    explicit CMaze(const std::string& path) = 0;
-
+    explicit CMaze(const unsigned int& width = 64, const unsigned int& height = 64, const std::uint32_t& seed = std::time(nullptr));
+    explicit CMaze(const std::string& path);
+    
     /**
      *  Virtual destructor
      */
-    virtual ~CMaze() = 0;
+    virtual ~CMaze(){}
 
+public:
     /**
      *  Set the width of a maze
      */
@@ -120,39 +126,66 @@ public:
     /**
      *  Get the load status of an IO operation
      */
-    inline LoadStatus& GetStatus() const{return status;}
+    const inline LoadStatus& GetStatus() const{return status;}
 
     /**
      *  Get the current load status of this map file and turn it into a human readable string.
      */
-    const inline std::string& GetError() const;
+    inline std::string GetError() const
+    {
+        std::string ret;
+
+        switch(status)
+        {
+        case LoadStatus::SUCCESS:
+            ret = "SUCCESS";
+            break;
+        case LoadStatus::INVALID_MAZE:
+            ret = "INVALID_MAZE";
+            break;
+        case LoadStatus::IO_ERROR:
+            ret = "IO_ERROR";
+            break;
+        case LoadStatus::FATAL_ERROR:
+            ret = "FATAL_ERROR";
+            break;
+        default:
+            ret = "";
+            break;
+        }
+
+        return ret;
+    }
+    
+
+protected:
+/**
+ *  Generate an index in our grid (a one-dimensional array) give two cartesian coordinates
+ */
+ inline unsigned int Pos2Offset(const unsigned int& x, const unsigned int& y) const
+ {
+    return (y * width) + x;
+ }
+
+ inline unsigned int Pos2Offset(const Mazer::cell& c) const
+ {
+    return (c.y + width) + c.x;
+ }
 
 private:
-    unsigned int    width;
-    unsigned int    height;
+    unsigned int            width;      /**< Maze width */
+    unsigned int            height;     /**< Maze height */
 
-    std::uint32_t   seed;   
+    std::uint32_t           seed;       /**< Seed used to generate this maze */
+
+    LoadStatus              status;
 
 
+    std::vector<bool>       cells;      /**< Array describing which cells we have visited (for generation) */
+    std::list<Mazer::edge>   edges;      /**< List of edges */
 };
 
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
-
 
 
 #endif

@@ -147,7 +147,7 @@ void Mazer::CArgs::Dispatch() const
     using namespace Mazer;
 
     // Nice hack to use different constructors ;)
-    std::unique_ptr<CMaze> maze;
+    //std::unique_ptr<CMaze> maze;
 
     if(ops.at(Operations::GENERATE))
     {
@@ -158,27 +158,27 @@ void Mazer::CArgs::Dispatch() const
             std::cout << "No seed provided! Using default: " << std::hex << std::time(nullptr) << std::endl;
         }
 
-        maze = std::make_unique<CMaze>(width, height, seed);
-        maze.get()->GenerateMaze();
+        //maze = std::make_unique<CMaze>(width, height, seed);
+        //maze.get()->GenerateMaze();
         std::cout << "Done!" << std::endl;
 
         if(ops.at(Operations::SAVE_BIN))
         {
             std::cout << "Writing maze to disk..." << std::endl;
             std::flush(std::cout);
-            maze.get()->WriteBinary(binPath);
+            //maze.get()->WriteBinary(binPath);
             std::cout << "Done!" << std::endl;
         }
 
         if(ops.at(Operations::SAVE_SVG))
         {
             std::cout << "Writing svg to disk..." << std::endl;
-            maze.get()->WriteSVG(svgPath);
+            //maze.get()->WriteSVG(svgPath);
 
-            if(maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS)
+            if(/**maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS**/0)
             {
-                std::string err = maze.get()->GetError();
-                Log(LogLevel::FATAL, "Unable to write SVG! Reason: %s\n", err.c_str());
+                //std::string err = maze.get()->GetError();
+                //Log(LogLevel::FATAL, "Unable to write SVG! Reason: %s\n", err.c_str());
                 std::exit(-1);
             }
             else
@@ -191,11 +191,11 @@ void Mazer::CArgs::Dispatch() const
     if(ops.at(Operations::LOAD_BIN))
     {
         std::cout << "Loading maze from disk..." << std::endl;
-        maze = std::make_unique<CMaze>(binPath);
-        if(maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS)
+        //maze = std::make_unique<CMaze>(binPath);
+        if(/**maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS*/0)
         {
-            std::string err = maze.get()->GetError();
-            Log(LogLevel::FATAL, "Unable to read binary file! Reason: %s\n", err.c_str());
+            //std::string err = maze.get()->GetError();
+            //Log(LogLevel::FATAL, "Unable to read binary file! Reason: %s\n", err.c_str());
             std::exit(-1);
         }
         else
@@ -206,11 +206,11 @@ void Mazer::CArgs::Dispatch() const
         if(ops.at(Operations::SAVE_SVG))
         {
             std::cout << "Writing svg to disk..." << std::endl;
-            maze.get()->WriteSVG(svgPath);
-            if(maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS)
+            //maze.get()->WriteSVG(svgPath);
+            if(/**maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS*/0)
             {
-                std::string err = maze.get()->GetError();
-                Log(LogLevel::FATAL, "Unable to write SVG! Reason: %s\n", err.c_str());
+                //std::string err = maze.get()->GetError();
+                //Log(LogLevel::FATAL, "Unable to write SVG! Reason: %s\n", err.c_str());
                 std::exit(-1);
             }
             else

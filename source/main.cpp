@@ -25,15 +25,21 @@
 #include <vector>
 #include <stdexcept>
 #include "maze.hpp"
+#include "gtree.hpp"
 #include "args.hpp"
 
 using namespace Mazer;
 
+
+
 int main(int argc, char** argv)
 {
-	CArgs args(argc, argv);
-    args.Parse();
 
+	//CArgs args(argc, argv);
+    //args.Parse();
+    CMaze* maze = new CGrowingTreeMaze();
+
+    std::cout << maze->GetWidth() << std::endl;
 	return 0;
 }
 

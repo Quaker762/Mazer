@@ -21,37 +21,25 @@
  **/
 #include "maze.hpp"
 
-#include <iostream>
-
-
-
-Mazer::CMaze::CMaze(const unsigned int& _width, const unsigned int& _height, const std::uint32_t& _seed) : width(_width), height(_height), seed(_seed), status(LoadStatus::INVALID_MAZE), cells(false), edges()
+namespace Mazer
 {
-    cells.resize(width * height);
-    std::fill(cells.begin(), cells.end(), false);
-}
 
-Mazer::CMaze::CMaze(const std::string& path) : width(0), height(0), seed(0), status(LoadStatus::INVALID_MAZE), cells(false), edges()
+class CGrowingTreeMaze : public CMaze
 {
-    LoadBinary(path);
-}
+public:
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    explicit CGrowingTreeMaze(const unsigned int& width = 64, const unsigned int& height = 64, const std::uint32_t& seed = std::time(nullptr)) :CMaze(width, height, seed){}
+    explicit CGrowingTreeMaze(const std::string& path) : CMaze(path){}
+    ~CGrowingTreeMaze(){} // No linker errors in this Dojo ;)
+
+    /**
+     *  Inherited function implementation
+     */
+    void GenerateMaze(){}
+
+};
 
 
 
 
-void Mazer::CMaze::WriteBinary(const std::string& path)
-{
-    std::cout << "TODO: Implement Me!!!";
-}
-
-void Mazer::CMaze::LoadBinary(const std::string& path)
-{
-    std::cout << "TODO: Implement Me!!!";
-}
-
-void Mazer::CMaze::WriteSVG(const std::string& path)
-{
-    std::cout << "TODO: Implement Me!!!";
 }
