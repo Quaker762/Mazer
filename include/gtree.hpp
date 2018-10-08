@@ -19,3 +19,27 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  **/
+#include "maze.hpp"
+
+namespace Mazer
+{
+
+class CGrowingTreeMaze : public CMaze
+{
+public:
+
+    explicit CGrowingTreeMaze(const unsigned int& width = 64, const unsigned int& height = 64, const std::uint32_t& seed = std::time(nullptr)) :CMaze(width, height, seed){}
+    explicit CGrowingTreeMaze(const std::string& path) : CMaze(path){}
+    ~CGrowingTreeMaze(){} // No linker errors in this Dojo ;)
+
+    /**
+     *  Inherited function implementation
+     */
+    void GenerateMaze(){}
+
+};
+
+
+
+
+}
