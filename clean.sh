@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm --force cmake_install.cmake
+rm cmake_install.cmake
 rm -rf CMakeFiles
-rm --force CMakeCache.txt
-rm --force Makefile
+rm CMakeCache.txt
+rm Makefile
