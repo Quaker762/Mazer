@@ -94,7 +94,7 @@ public:
     /**
      *  Generate a new maze using the 'Hunt and Kill Algorithm'.
      */
-    void GenerateMaze();
+    //void GenerateMaze();
 
     /**
      *  Save this maze as a .maze binary file
@@ -130,12 +130,12 @@ private:
      *  Walk the grid by advancing to a random cell left, right, up or down from where we are,
      *  all the while checking whether they have been visited or not.
      */
-    Mazer::cell Walk(const int& x, const int& y);
+    //Mazer::cell Walk(const int& x, const int& y);
     
     /**
      *  Search each row for a cell with at least one unvisited neighbour.
      */
-    Mazer::cell Hunt(void);
+    //Mazer::cell Hunt(void);
 
 	/**
  	 *	Get a list of neigbours given a position	

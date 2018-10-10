@@ -205,6 +205,7 @@ void Mazer::CMaze::LoadBinary(const std::string& path)
     status = LoadStatus::SUCCESS;
 }
 
+/**
 Mazer::cell Mazer::CMaze::Walk(const int& x, const int& y)
 {
     static int count = 0;
@@ -413,6 +414,7 @@ void Mazer::CMaze::GenerateMaze()
     std::cout << std::endl;
     //Mazer::Log(Mazer::LogLevel::INFO, "Done!\n");
 }
+**/
 
 void Mazer::CMaze::WriteSVG(const std::string& path)
 {

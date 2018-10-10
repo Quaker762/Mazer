@@ -35,6 +35,7 @@ mazer
 mazegen
 
 # CMake shit
+bin/*
 CMakeCache.txt
 cmake_install.cmake
 CMakeFiles/*
