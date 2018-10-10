@@ -142,6 +142,8 @@ void Mazer::CArgs::Parse()
     Dispatch();
 }
 
+
+//TODO: Refactor me to accept Prims Generation and Recursive Generation!
 void Mazer::CArgs::Dispatch() const
 {
     using namespace Mazer;
@@ -159,7 +161,7 @@ void Mazer::CArgs::Dispatch() const
         }
 
         maze = std::make_unique<CMaze>(width, height, seed);
-        maze.get()->GenerateMaze();
+        //maze.get()->GenerateMaze();
         std::cout << "Done!" << std::endl;
 
         if(ops.at(Operations::SAVE_BIN))
