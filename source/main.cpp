@@ -27,10 +27,14 @@
 #include "maze.hpp"
 #include "args.hpp"
 
+#include "prims.hpp"
 using namespace Mazer;
 
 int main(int argc, char** argv)
 {
+    Mazer::CPrimsGenerator p(256, 256, 0xDEADBABE);
+    p.GenerateMaze();
+
 	CArgs args(argc, argv);
     args.Parse();
 

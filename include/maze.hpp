@@ -125,7 +125,6 @@ public:
      */
     const std::string GetError() const;
 
-private:
     /**
      *  Walk the grid by advancing to a random cell left, right, up or down from where we are,
      *  all the while checking whether they have been visited or not.
@@ -144,11 +143,27 @@ private:
 	std::vector<Mazer::cell> GetNeighbours(const Mazer::cell& c) const;	
 
     /**
+     *  Set a particular cell as being visited
+     */
+    void VisitCell(const int& x, const int& y);
+    void VisitCell(const Mazer::cell& c);
+
+    /**
+     *  Get whether or not a cell has been visited
+     */
+    bool IsCellVisited(const int& x, const int& y) const;
+    bool IsCellVisited(const Mazer::cell& c) const;
+
+    /**
      *  Generate an index in our grid (a one dimensional array) given two co-ords.
      */
     int Pos2Offset(const int& x, const int& y) const;
 	int Pos2Offset(const Mazer::cell& c) const;
 		
+    /**
+     *  Add an edge to the edge list
+     */
+    void AddEdge(Mazer::edge& e);
 
 private:
     int 				    width;                                  /**< Maze Width */
@@ -161,7 +176,7 @@ private:
     std::vector<bool> 	    cells;                    				/**< Array desribing which cells we have visited (for generation) */
     std::list<Mazer::edge>  edges;                                  /**< List of edges */
 
-private:
+public:
     /**
      *  Cell directions
      */

@@ -29,8 +29,8 @@ namespace Mazer{
  */
 struct cell
 {
-    int x;
-    int y;
+    int     x;
+    int     y;
 };
 
 

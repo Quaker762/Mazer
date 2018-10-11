@@ -460,6 +460,36 @@ void Mazer::CMaze::WriteSVG(const std::string& path)
     status = LoadStatus::SUCCESS;
 }
 
+void Mazer::CMaze::VisitCell(const int& x, const int& y)
+{
+    int off = Pos2Offset(x, y);
+    cells.at(off) = true;
+}
+
+void Mazer::CMaze::VisitCell(const Mazer::cell& c)
+{
+    int off = Pos2Offset(c);
+    cells.at(off) = true;
+}
+
+bool Mazer::CMaze::IsCellVisited(const int& x, const int& y) const
+{
+    int off = Pos2Offset(x, y);
+    
+    return cells.at(off);
+}
+
+bool Mazer::CMaze::IsCellVisited(const Mazer::cell& c) const
+{
+    int off = Pos2Offset(c);
+
+    return cells.at(off);
+}
+
+void Mazer::CMaze::AddEdge(Mazer::edge& e)
+{
+    edges.push_back(e);
+}
 
 const std::string Mazer::CMaze::GetError() const
 {
