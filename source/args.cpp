@@ -196,10 +196,10 @@ void Mazer::CArgs::Dispatch() const
 
         if(ops.at(Operations::SAVE_BIN))
         {
-            Log(LogLevel::INFO, "Writing maze to disk...");
+            Log(LogLevel::INFO, "Writing maze to disk...\n");
             std::flush(std::cout);
             genmaze.get()->GetMaze().WriteBinary(binPath);
-            Log(LogLevel::INFO, "Done!");
+            Log(LogLevel::INFO, "Done!\n");
         }
 
         if(ops.at(Operations::SAVE_SVG))
@@ -222,7 +222,7 @@ void Mazer::CArgs::Dispatch() const
 
     if(ops.at(Operations::LOAD_BIN))
     {
-        Log(LogLevel::INFO, "Loading maze from disk...");
+        Log(LogLevel::INFO, "Loading maze from disk...\n");
         maze = std::make_unique<CMaze>(binPath);
         if(maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS)
         {
@@ -232,7 +232,7 @@ void Mazer::CArgs::Dispatch() const
         }
         else
         {
-            Log(LogLevel::INFO, "Done!");
+            Log(LogLevel::INFO, "Done!\n");
         }
 
         if(ops.at(Operations::SAVE_SVG))
