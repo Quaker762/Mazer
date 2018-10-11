@@ -49,7 +49,7 @@ private:
 public:
     enum Operations : int
     {
-        GENERATE = 0, 
+        GENERATE = 0,
         SAVE_BIN,
         LOAD_BIN, 
         SAVE_SVG
@@ -76,6 +76,8 @@ private:
     const std::string ASAVE_BIN = "--sb";
     const std::string ASAVE_SVG = "--sv";
     const std::string AGEN_SEED = "--g";
+    const std::string AGEN_PRIM = "--gp";
+    const std::string AGEN_RECB = "--gr";
 };
 
 }

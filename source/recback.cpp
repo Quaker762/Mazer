@@ -29,7 +29,7 @@ Mazer::CRecursiveGenerator::CRecursiveGenerator(const int& width, const int& hei
 
 }
 
-void Mazer::CRecursiveGenerator::ChooseCell(const int& cIndex)
+int Mazer::CRecursiveGenerator::GetNextCellIndex()
 {
-    std::cout << "Recursive Backtracer Generator" << std::endl;
+   return cellList.size() - 1;
 }

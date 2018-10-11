@@ -46,7 +46,7 @@ public:
     /**
      *  Implementation of CGrowingTree's 'ChooseCell()'
      */
-    void ChooseCell(const int& cIndex);
+    int GetNextCellIndex(void);
 };
 
 

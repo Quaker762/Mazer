@@ -23,6 +23,9 @@
 #define GTREE_INCLUDED
 
 #include <cstdint>
+#include <vector>
+#include <random>
+
 #include "maze.hpp"
 
 namespace Mazer
@@ -47,6 +50,7 @@ public:
      *  Actual constructor
      */
     explicit CGrowingTree(const int& width, const int& height, const std::uint32_t& seed);
+    explicit CGrowingTree(const std::string& path);
 
     /**
      *  Virtual destructor to prevent to prevent gcc from being angry at me! :^)
@@ -60,12 +64,20 @@ public:
     void GenerateMaze();
 
     /**
+     *  Get Maze for use in args
+     */
+    CMaze& GetMaze(){return maze;}
+
+    /**
      *  
      */
-    virtual void ChooseCell(const int& cIndex) = 0;
+    virtual int GetNextCellIndex(void) = 0;
 
 protected:
-    CMaze       maze;   /**< Our maze object (Should be used for data only!) */
+    CMaze                       maze;       /**< Our maze object (Should be used for data only!) */
+    
+    std::vector<cell>           cellList;   /**< Our cell list, C, for the growing tree */
+    std::mt19937                rng;        /**< Our random number generator */
 };
 
 }

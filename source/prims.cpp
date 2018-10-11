@@ -26,10 +26,10 @@
 Mazer::CPrimsGenerator::CPrimsGenerator(const int& width, const int& height, const std::uint32_t& seed)
     : CGrowingTree(width, height, seed)
 {
-
 }
 
-void Mazer::CPrimsGenerator::ChooseCell(const int& cIndex)
-{
-    std::cout << "Prims Generator" << std::endl;
+int Mazer::CPrimsGenerator::GetNextCellIndex()
+{ 
+    std::uniform_int_distribution<int> range(0, cellList.size()-1);
+    return range(rng);
 }

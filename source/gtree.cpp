@@ -20,18 +20,100 @@
  *  SOFTWARE.
  **/
 #include "gtree.hpp"
+#include "log.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 Mazer::CGrowingTree::CGrowingTree(const int& width, const int& height, const std::uint32_t& seed)
-    : maze(width, height, seed)
+    : maze(width, height, seed), cellList(0), rng(seed) 
 {
-    std::cout << "Constructing base class CGrowingTree!" << std::endl;    
+    Mazer::Log(Mazer::LogLevel::INFO, "Constructing base class CGrowingTree!\n");    
+    Mazer::Log(Mazer::LogLevel::INFO, "Maze Size: [%d, %d]\n", width, height);
+    Mazer::Log(Mazer::LogLevel::INFO, "Maze seed: 0x%x\n", seed);
 }
 
+/**
+ *  Okay, so here's a quick rundown on how this actually works...:
+ *
+ *  1. cellList is a list of cells that's empty. We add one cell to this in the beginning at random
+ *  2. We choose a cell from the list, cellList, and we carve a passage to that cell (all the while adding
+ *  edges to our edgelist[???]). If there are no unvisited neighbours, that cell gets removed from cellList.
+ *  3. We repeat this until cellList is empty.
+ */
 void Mazer::CGrowingTree::GenerateMaze()
 {
-    ChooseCell(5);
+    cell c;
+    std::uniform_int_distribution<int> xrange(0, maze.GetWidth());
+    std::uniform_int_distribution<int> yrange(0, maze.GetHeight());
+    std::vector<cell> directions;
+    // Yikes...
+    directions.push_back(maze.dirVals[0]);
+    directions.push_back(maze.dirVals[1]);
+    directions.push_back(maze.dirVals[2]);
+    directions.push_back(maze.dirVals[3]);
+
+    Mazer::Log(Mazer::LogLevel::INFO, "Generating Maze...\n");
+
+    // Pick a random x,y value for the first cell!
+    c.x = xrange(rng);
+    c.y = yrange(rng);
+    Mazer::Log(Mazer::LogLevel::INFO, "First random cell at (%d, %d)\n", c.x, c.y);
+
+    cellList.push_back(c); // Add a random cell to the cell List..
+
+    // Keep going until we're outta cells!
+    
+    while(!cellList.empty())
+    {
+        int     cellIndex = GetNextCellIndex();
+        cell    c = cellList.at(cellIndex);
+
+        //Mazer::Log(Mazer::LogLevel::INFO, "cellIndex == %d, cellList.size() == %d\n", cellIndex, cellList.size());
+
+        // Now get all of the cells neighbours
+        std::vector<cell> neighbours = maze.GetNeighbours(c); // Hehe, I knew this function would come in handy!
+
+        // Try out each direction
+        for(int i = 0; i < 4; i++)
+        {
+            cell newCell = c;
+            std::shuffle(directions.begin(), directions.end(), rng);
+            
+            newCell.x += directions.at(0).x;
+            newCell.y += directions.at(0).y;
+            
+            //Mazer::Log(Mazer::LogLevel::INFO, "New Cell at (%d,%d), i==%d\n", newCell.x, newCell.y, i);
+            // This is an unvisited neighbour!
+            if(newCell.x >= 0 && newCell.y >= 0 && newCell.x < maze.GetWidth() 
+                && newCell.y < maze.GetHeight()
+                && !maze.IsCellVisited(newCell))
+            {
+                //Mazer::Log(Mazer::LogLevel::INFO, "Creating edge...\n");
+                // Create an edge and add it to the edge list!
+                maze.VisitCell(c);
+                maze.VisitCell(newCell);
+
+                edge e;
+                e.c_A = c;
+                e.c_B = newCell;
+
+                maze.AddEdge(e);
+                // Add this cell to the cellList (???)
+                cellList.push_back(newCell);
+                cellIndex = -1;
+            }
+
+            if(cellIndex == -1)
+                break;
+        }
+        
+        // If we haven't found a valid cell, remove it from cellList and try again!
+        if(cellIndex != -1)
+        {
+            cellList.erase(cellList.begin() + cellIndex);
+        }
+    }
 }
 
 

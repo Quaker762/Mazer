@@ -27,6 +27,7 @@
 #include "maze.hpp"
 #include "args.hpp"
 
+#include "prims.hpp"
 using namespace Mazer;
 
 int main(int argc, char** argv)
