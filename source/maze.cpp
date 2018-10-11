@@ -429,26 +429,26 @@ void Mazer::CMaze::WriteSVG(const std::string& path)
         return;
     }
 
-    mapFile << "<svg viewBox='0 0 1 1' width='500' height='500' xmlns='http://www.w3.org/2000/svg'>\n";
-    mapFile << "\t<rect width='1' height='1' style='fill: black' />\n";
+    mapFile << "<svg viewBox='0 0 " << width << " " << height << "'" << " width='500' height='500' xmlns='http://www.w3.org/2000/svg'>\n";
+    mapFile << "\t<rect width='" << width << "'" << " height='"<< height << "' style='fill: black' />\n";
 
     for(std::list<Mazer::edge>::iterator it = edges.begin(); it != edges.end(); ++it)
     {
         Mazer::edge e = *it;
 
-        mapFile << "\t<line stroke='white' stroke-width='0.005' "; 
+        mapFile << "\t<line stroke='white' stroke-width='0.5' "; 
 
         mapFile << "x1='"; 
-        mapFile << static_cast<double>(e.c_A.x)/width;
+        mapFile << static_cast<double>(e.c_A.x);
 
         mapFile << "' y1='"; 
-        mapFile << static_cast<double>(e.c_A.y)/width; 
+        mapFile << static_cast<double>(e.c_A.y); 
 
         mapFile << "' x2='";
-        mapFile << static_cast<double>(e.c_B.x)/width;
+        mapFile << static_cast<double>(e.c_B.x);
 
         mapFile << "' y2='"; 
-        mapFile << static_cast<double>(e.c_B.y)/width;
+        mapFile << static_cast<double>(e.c_B.y);
 
         mapFile<< "'/>\n";
     }
