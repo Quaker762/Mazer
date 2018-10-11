@@ -22,6 +22,9 @@
 #include "args.hpp"
 #include "maze.hpp"
 #include "log.hpp"
+#include "gtree.hpp"
+#include "prims.hpp"
+#include "recback.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -29,6 +32,8 @@
 #include <cctype>
 #include <iostream>
 #include <memory>
+
+bool usePrims = false; // HAHAHAHAHAHAHAHA
 
 /**
  *  Returns non-zero if value is a valid number/hex number
@@ -38,7 +43,7 @@ static bool IsNumber(const std::string& arg)
     return !arg.empty() && std::find_if(arg.begin(), arg.end(), [](char c){return !std::isxdigit(c); }) == arg.end();
 }
 
-Mazer::CArgs::CArgs(int _argc, char** argv) : argc(_argc), args(), binPath(""), svgPath(""), ops(false), width(0), height(0), seed(0), genNoArgs(false)
+Mazer::CArgs::CArgs(int _argc, char** argv) : argc(_argc), args(), binPath(""), svgPath(""), ops(false), width(0), height(0), seed(std::time(nullptr)), genNoArgs(false)
 {
     args.reserve(argc); // Reserve 'argc' number of strings in our vector
     args.assign(argv, argv + argc); // Copy all of the data from argv into a more friendly string vector
@@ -55,7 +60,8 @@ void Mazer::CArgs::Parse()
         std::cout << "Usage:" << std::endl;
         std::cout << " mazer --g [seed] [width height] --sb [path] --sv [path] --lb [path]" << std::endl << std::endl;
         std::cout << "Options:" << std::endl;
-        std::cout << "--g\t\tGenerate maze (with optional seed, and dimensions)" << std::endl;
+        std::cout << "--gr\t\tGenerate maze using the Recursive Backtracking Algorithm" << std::endl;
+        std::cout << "--gp\t\tGenerate maze using Prim's Algorithm" << std::endl;
         std::cout << "--sb\t\tSave generated maze to .maze binary file" << std::endl;
         std::cout << "--sv\t\tSave generated maze to a .svg file" << std::endl;
         std::cout << "--lb\t\tLoad pre-generated binary file from disk" << std::endl;
@@ -67,9 +73,13 @@ void Mazer::CArgs::Parse()
     {
         std::string arg = args.at(i); // Get current argument
         
-        if(arg == AGEN_SEED)
+        if(arg == AGEN_PRIM || arg == AGEN_RECB)
         {
             ops.at(Operations::GENERATE) = true;
+            
+            // ewww
+            if(arg.c_str()[3] == 'p')
+                usePrims = true;
 
             if(args.size() <= 4)
             {
@@ -149,6 +159,7 @@ void Mazer::CArgs::Dispatch() const
     using namespace Mazer;
 
     // Nice hack to use different constructors ;)
+    std::unique_ptr<CGrowingTree> genmaze;
     std::unique_ptr<CMaze> maze;
 
     if(ops.at(Operations::GENERATE))
@@ -157,27 +168,35 @@ void Mazer::CArgs::Dispatch() const
         std::flush(std::cout);
         if(seed == 0)
         {
-            std::cout << "No seed provided! Using default: " << std::hex << std::time(nullptr) << std::endl;
+            Mazer::Log(LogLevel::WARNING, "No seed provided! Using default: 0x%x\n", seed);
         }
 
-        maze = std::make_unique<CMaze>(width, height, seed);
-        //maze.get()->GenerateMaze();
-        std::cout << "Done!" << std::endl;
+        if(usePrims)
+        {
+            genmaze = std::make_unique<CPrimsGenerator>(width, height, seed);
+        }
+        else
+        {
+            genmaze = std::make_unique<CRecursiveGenerator>(width, height, seed);
+        }
+
+        genmaze.get()->GenerateMaze();
+        Log(LogLevel::INFO, "Done!\n");
 
         if(ops.at(Operations::SAVE_BIN))
         {
-            std::cout << "Writing maze to disk..." << std::endl;
+            Log(LogLevel::INFO, "Writing maze to disk...");
             std::flush(std::cout);
-            maze.get()->WriteBinary(binPath);
-            std::cout << "Done!" << std::endl;
+            genmaze.get()->GetMaze().WriteBinary(binPath);
+            Log(LogLevel::INFO, "Done!");
         }
 
         if(ops.at(Operations::SAVE_SVG))
         {
-            std::cout << "Writing svg to disk..." << std::endl;
-            maze.get()->WriteSVG(svgPath);
+            Log(Mazer::LogLevel::INFO, "Writing svg to disk...\n");
+            genmaze.get()->GetMaze().WriteSVG(svgPath);
 
-            if(maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS)
+            if(genmaze.get()->GetMaze().GetStatus() != CMaze::LoadStatus::SUCCESS)
             {
                 std::string err = maze.get()->GetError();
                 Log(LogLevel::FATAL, "Unable to write SVG! Reason: %s\n", err.c_str());
@@ -192,7 +211,7 @@ void Mazer::CArgs::Dispatch() const
 
     if(ops.at(Operations::LOAD_BIN))
     {
-        std::cout << "Loading maze from disk..." << std::endl;
+        Log(LogLevel::INFO, "Loading maze from disk...");
         maze = std::make_unique<CMaze>(binPath);
         if(maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS)
         {
@@ -202,12 +221,12 @@ void Mazer::CArgs::Dispatch() const
         }
         else
         {
-            std::cout << "Done!" << std::endl;
+            Log(LogLevel::INFO, "Done!");
         }
 
         if(ops.at(Operations::SAVE_SVG))
         {
-            std::cout << "Writing svg to disk..." << std::endl;
+            Log(LogLevel::INFO, "Writing svg to disk...\n");
             maze.get()->WriteSVG(svgPath);
             if(maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS)
             {
@@ -217,7 +236,7 @@ void Mazer::CArgs::Dispatch() const
             }
             else
             {
-                std::cout << "Done!" << std::endl;
+                Log(LogLevel::INFO, "Done!\n");
             }
         }
     }

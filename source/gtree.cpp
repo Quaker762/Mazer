@@ -69,6 +69,8 @@ void Mazer::CGrowingTree::GenerateMaze()
         int     cellIndex = GetNextCellIndex();
         cell    c = cellList.at(cellIndex);
 
+        //Mazer::Log(Mazer::LogLevel::INFO, "cellIndex == %d, cellList.size() == %d\n", cellIndex, cellList.size());
+
         // Now get all of the cells neighbours
         std::vector<cell> neighbours = maze.GetNeighbours(c); // Hehe, I knew this function would come in handy!
 
@@ -81,11 +83,13 @@ void Mazer::CGrowingTree::GenerateMaze()
             newCell.x += directions.at(0).x;
             newCell.y += directions.at(0).y;
             
+            //Mazer::Log(Mazer::LogLevel::INFO, "New Cell at (%d,%d), i==%d\n", newCell.x, newCell.y, i);
             // This is an unvisited neighbour!
             if(newCell.x >= 0 && newCell.y >= 0 && newCell.x < maze.GetWidth() 
-                && newCell.y < maze.GetHeight() 
+                && newCell.y < maze.GetHeight()
                 && !maze.IsCellVisited(newCell))
             {
+                //Mazer::Log(Mazer::LogLevel::INFO, "Creating edge...\n");
                 // Create an edge and add it to the edge list!
                 maze.VisitCell(c);
                 maze.VisitCell(newCell);
@@ -94,18 +98,21 @@ void Mazer::CGrowingTree::GenerateMaze()
                 e.c_A = c;
                 e.c_B = newCell;
 
+                maze.AddEdge(e);
                 // Add this cell to the cellList (???)
                 cellList.push_back(newCell);
-                cellIndex = 0;
+                cellIndex = -1;
             }
 
-            if(cellIndex == 0)
+            if(cellIndex == -1)
                 break;
         }
         
         // If we haven't found a valid cell, remove it from cellList and try again!
-        if(cellIndex != 0)
+        if(cellIndex != -1)
+        {
             cellList.erase(cellList.begin() + cellIndex);
+        }
     }
 }
 

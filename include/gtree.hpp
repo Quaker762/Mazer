@@ -50,6 +50,7 @@ public:
      *  Actual constructor
      */
     explicit CGrowingTree(const int& width, const int& height, const std::uint32_t& seed);
+    explicit CGrowingTree(const std::string& path);
 
     /**
      *  Virtual destructor to prevent to prevent gcc from being angry at me! :^)
@@ -61,6 +62,11 @@ public:
      *  Generate the maze
      */
     void GenerateMaze();
+
+    /**
+     *  Get Maze for use in args
+     */
+    CMaze& GetMaze(){return maze;}
 
     /**
      *  
