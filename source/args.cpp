@@ -32,6 +32,7 @@
 #include <cctype>
 #include <iostream>
 #include <memory>
+#include <chrono>
 
 bool usePrims = false; // HAHAHAHAHAHAHAHA
 
@@ -43,8 +44,13 @@ static bool IsNumber(const std::string& arg)
     return !arg.empty() && std::find_if(arg.begin(), arg.end(), [](char c){return !std::isxdigit(c); }) == arg.end();
 }
 
-Mazer::CArgs::CArgs(int _argc, char** argv) : argc(_argc), args(), binPath(""), svgPath(""), ops(false), width(0), height(0), seed(std::time(nullptr)), genNoArgs(false)
+Mazer::CArgs::CArgs(int _argc, char** argv) : argc(_argc), args(), binPath(""), svgPath(""), ops(false),
+width(0), height(0), 
+seed(0), genNoArgs(false)
 {
+    auto duration = std::chrono::high_resolution_clock::now().time_since_epoch();
+    seed = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
     args.reserve(argc); // Reserve 'argc' number of strings in our vector
     args.assign(argv, argv + argc); // Copy all of the data from argv into a more friendly string vector
     ops.resize(4);
@@ -179,16 +185,21 @@ void Mazer::CArgs::Dispatch() const
         {
             genmaze = std::make_unique<CRecursiveGenerator>(width, height, seed);
         }
-
+        
+        // Time the generation
+        auto t1 = std::chrono::high_resolution_clock::now();
         genmaze.get()->GenerateMaze();
-        Log(LogLevel::INFO, "Done!\n");
+        auto t2 = std::chrono::high_resolution_clock::now();
+
+        auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+        Log(LogLevel::INFO, "Done! Generation time = %dms\n", dt);
 
         if(ops.at(Operations::SAVE_BIN))
         {
-            Log(LogLevel::INFO, "Writing maze to disk...");
+            Log(LogLevel::INFO, "Writing maze to disk...\n");
             std::flush(std::cout);
             genmaze.get()->GetMaze().WriteBinary(binPath);
-            Log(LogLevel::INFO, "Done!");
+            Log(LogLevel::INFO, "Done!\n");
         }
 
         if(ops.at(Operations::SAVE_SVG))
@@ -204,14 +215,14 @@ void Mazer::CArgs::Dispatch() const
             }
             else
             {
-                std::cout << "Done!" << std::endl;
+                Log(LogLevel::INFO, "Done!\n");
             }
         }
     }
 
     if(ops.at(Operations::LOAD_BIN))
     {
-        Log(LogLevel::INFO, "Loading maze from disk...");
+        Log(LogLevel::INFO, "Loading maze from disk...\n");
         maze = std::make_unique<CMaze>(binPath);
         if(maze.get()->GetStatus() != CMaze::LoadStatus::SUCCESS)
         {
@@ -221,7 +232,7 @@ void Mazer::CArgs::Dispatch() const
         }
         else
         {
-            Log(LogLevel::INFO, "Done!");
+            Log(LogLevel::INFO, "Done!\n");
         }
 
         if(ops.at(Operations::SAVE_SVG))
