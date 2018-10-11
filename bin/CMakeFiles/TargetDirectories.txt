@@ -1,3 +1,0 @@
-/home/quaker/Uni/Year 3/Sem2/COSC1254/mazer_1/bin/CMakeFiles/rebuild_cache.dir
-/home/quaker/Uni/Year 3/Sem2/COSC1254/mazer_1/bin/CMakeFiles/mazer.dir
-/home/quaker/Uni/Year 3/Sem2/COSC1254/mazer_1/bin/CMakeFiles/edit_cache.dir

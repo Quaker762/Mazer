@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -Wextra -Weffc++ -pedantic -std=c++14  -rdynamic CMakeFiles/mazer.dir/source/args.cpp.o CMakeFiles/mazer.dir/source/log.cpp.o CMakeFiles/mazer.dir/source/main.cpp.o CMakeFiles/mazer.dir/source/maze.cpp.o  -o mazer 
