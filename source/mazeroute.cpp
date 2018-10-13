@@ -19,19 +19,50 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  **/
-#include "prims.hpp"
+#include "mazeroute.hpp"
 #include "log.hpp"
+#include "cell.hpp"
 
+#include <fstream>
 #include <iostream>
 
-Mazer::CPrimsGenerator::CPrimsGenerator(const int& width, const int& height, const std::uint32_t& seed)
-    : CGrowingTree(width, height, seed)
+Mazer::CMazeRouter::CMazeRouter(const Mazer::CMaze& _maze)
+    : CSolvingAlgorithm(_maze)
 {
-    Mazer::Log(LogLevel::INFO, "Using Prim's Algorithm\n");
+    Mazer::Log(Mazer::LogLevel::INFO, "Using Maze Routing Algorithm\n");
 }
 
-int Mazer::CPrimsGenerator::GetNextCellIndex()
-{ 
-    std::uniform_int_distribution<int> range(0, cellList.size()-1);
-    return range(rng);
+int ManhattanDistance(Mazer::cell c1, Mazer::cell c2)
+{
+    return std::abs(c1.x - c2.x) + std::abs(c1.y - c2.y);
+}
+
+void Mazer::CMazeRouter::SolveMaze(const std::string& fname)
+{
+    using namespace Mazer;
+
+    cell src;       // Source node (which is [0,0])
+    cell dst;       // Our destination (which is [width - 1, height - 1])
+    cell cur;       // Our current node
+    int  md_best;   // Stores the closest md we ever had to dst
+
+    src.x = 0;
+    src.y = 0;
+    
+    // Now, I could technically have 1
+    cur.x = 0;
+    cur.y = 0;
+
+    dst.x = maze.GetWidth() - 1;
+    dst.y = maze.GetHeight() - 1;
+
+    md_best = ManhattanDistance(src, dst);
+    Log(LogLevel::INFO, "md_best = %d\n", md_best);
+    
+    std::ofstream f;
+    f.open(fname, std::ios_base::ate | std::ios_base::app);
+
+
+    f << "</svg>";
+    f.close();
 }

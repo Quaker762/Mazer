@@ -20,13 +20,14 @@
  *  SOFTWARE.
  **/
 #include "recback.hpp"
+#include "log.hpp"
 
 #include <iostream>
 
 Mazer::CRecursiveGenerator::CRecursiveGenerator(const int& width, const int& height, const std::uint32_t& seed)
     : CGrowingTree(width, height, seed)
 {
-
+    Mazer::Log(Mazer::LogLevel::INFO, "Using Recursive Backtracer\n");
 }
 
 int Mazer::CRecursiveGenerator::GetNextCellIndex()

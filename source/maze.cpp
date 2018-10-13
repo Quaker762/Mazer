@@ -453,7 +453,7 @@ void Mazer::CMaze::WriteSVG(const std::string& path)
         mapFile<< "'/>\n";
     }
 
-    mapFile << "</svg>";
+    //mapFile << "</svg>";
 
     mapFile.close();
 

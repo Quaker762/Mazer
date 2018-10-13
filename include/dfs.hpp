@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2018 Jesse Buhagiar and Timothy Davis
+ *  Copyright (c) 2018 Jesse Buhagiar
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -19,52 +19,36 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  **/
-#ifndef SOLVE_ALG_H_INCLUDED
-#define SOLVE_ALG_H_INCLUDED
+#ifndef DFSROUTE_HPP_INCLUDED
+#define DFSROUTE_HPP_INCLUDED
 
-#include "maze.hpp"
+#include "solvealg.hpp"
 
 #include <string>
 
 namespace Mazer {
 
-
 /**
- *  Base class for all maze solver algorithms
+ *  Maze routing 
  */
-class CSolvingAlgorithm
+class CDFSRouter : public CSolvingAlgorithm
 {
 public:
-
-    CSolvingAlgorithm() = delete;
-
-    /**
-     *  Constructor
-     */
-    explicit CSolvingAlgorithm(const CMaze& maze);
+    CDFSRouter() = delete;
 
     /**
-     *
+     *  Inherited Constructor
      */
-    virtual ~CSolvingAlgorithm(){}
+    explicit CDFSRouter(const CMaze& maze);
 
     /**
-     *  Function that a maze solver will implement
+     *  Actually solve the maze
      */
-    virtual void SolveMaze(const std::string& fname) = 0;
-
-
-protected:
-    CMaze maze;
+    void SolveMaze(const std::string& fname);
 };
 
+
 }
-
-
-
-
-
-
 
 
 #endif

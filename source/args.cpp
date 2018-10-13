@@ -25,6 +25,8 @@
 #include "gtree.hpp"
 #include "prims.hpp"
 #include "recback.hpp"
+#include "solvealg.hpp"
+#include "mazeroute.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -165,8 +167,9 @@ void Mazer::CArgs::Dispatch() const
     using namespace Mazer;
 
     // Nice hack to use different constructors ;)
-    std::unique_ptr<CGrowingTree> genmaze;
-    std::unique_ptr<CMaze> maze;
+    std::unique_ptr<CGrowingTree>       genmaze;
+    std::unique_ptr<CMaze>              maze;
+    std::unique_ptr<CSolvingAlgorithm>  solver;
 
     if(ops.at(Operations::GENERATE))
     {
@@ -192,7 +195,7 @@ void Mazer::CArgs::Dispatch() const
         auto t2 = std::chrono::high_resolution_clock::now();
 
         auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
-        Log(LogLevel::INFO, "Done! Generation time = %dms\n", dt);
+        Log(LogLevel::INFO, "Done! Generation time = %dms, solving now...\n", dt);
 
         if(ops.at(Operations::SAVE_BIN))
         {
@@ -218,6 +221,9 @@ void Mazer::CArgs::Dispatch() const
                 Log(LogLevel::INFO, "Done!\n");
             }
         }
+
+        solver = std::make_unique<CMazeRouter>(genmaze.get()->GetMaze());
+        solver->SolveMaze(svgPath);
     }
 
     if(ops.at(Operations::LOAD_BIN))
