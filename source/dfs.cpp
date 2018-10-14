@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2018 Jesse Buhagiar and Timothy Davis
+ *  Copyright (c) 2018 Jesse Buhagiar
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -19,27 +19,20 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  **/
-#ifndef _CELL_HPP_INCLUDED_
-#define _CELL_HPP_INCLUDED_
+#include "dfs.hpp"
+#include "log.hpp"
+#include "cell.hpp"
 
-#include <set>
+#include <fstream>
+#include <iostream>
 
-namespace Mazer{
-
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers" // HAHAHAHA BETCHA CAN'T FIND ME!
-
-/**
- *  A cell is a logical (x, y) cartesian co-ordinate in our grid of cells  
- */
-struct cell
+Mazer::CDFSRouter::CDFSRouter(const Mazer::CMaze& _maze)
+    : CSolvingAlgorithm(_maze)
 {
-    int     x;
-    int     y;
-
-    std::vector<cell>   neighbours;
-};
-
-
+    Mazer::Log(Mazer::LogLevel::INFO, "Using Maze Routing Algorithm\n");
 }
 
-#endif
+void Mazer::CDFSRouter::SolveMaze(const std::string& fname)
+{
+    using namespace Mazer;
+}

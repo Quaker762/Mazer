@@ -32,7 +32,7 @@
 
 #undef _DEBUG_
 
-static constexpr Mazer::cell INVALID_CELL = Mazer::cell{-1, -1};
+static const Mazer::cell INVALID_CELL = Mazer::cell{-1, -1};
 
 static std::mt19937 rng;
 
@@ -439,21 +439,21 @@ void Mazer::CMaze::WriteSVG(const std::string& path)
         mapFile << "\t<line stroke='white' stroke-width='0.5' "; 
 
         mapFile << "x1='"; 
-        mapFile << static_cast<double>(e.c_A.x);
+        mapFile << static_cast<double>(e.c_A.x + 0.5);
 
         mapFile << "' y1='"; 
-        mapFile << static_cast<double>(e.c_A.y); 
+        mapFile << static_cast<double>(e.c_A.y + 0.5); 
 
         mapFile << "' x2='";
-        mapFile << static_cast<double>(e.c_B.x);
+        mapFile << static_cast<double>(e.c_B.x + 0.5);
 
         mapFile << "' y2='"; 
-        mapFile << static_cast<double>(e.c_B.y);
+        mapFile << static_cast<double>(e.c_B.y + 0.5);
 
         mapFile<< "'/>\n";
     }
 
-    mapFile << "</svg>";
+    //mapFile << "</svg>";
 
     mapFile.close();
 

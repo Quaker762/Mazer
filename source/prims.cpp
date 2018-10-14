@@ -20,12 +20,14 @@
  *  SOFTWARE.
  **/
 #include "prims.hpp"
+#include "log.hpp"
 
 #include <iostream>
 
 Mazer::CPrimsGenerator::CPrimsGenerator(const int& width, const int& height, const std::uint32_t& seed)
     : CGrowingTree(width, height, seed)
 {
+    Mazer::Log(LogLevel::INFO, "Using Prim's Algorithm\n");
 }
 
 int Mazer::CPrimsGenerator::GetNextCellIndex()

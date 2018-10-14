@@ -19,27 +19,52 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  **/
-#ifndef _CELL_HPP_INCLUDED_
-#define _CELL_HPP_INCLUDED_
+#ifndef SOLVE_ALG_H_INCLUDED
+#define SOLVE_ALG_H_INCLUDED
 
-#include <set>
+#include "maze.hpp"
 
-namespace Mazer{
+#include <string>
 
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers" // HAHAHAHA BETCHA CAN'T FIND ME!
+namespace Mazer {
+
 
 /**
- *  A cell is a logical (x, y) cartesian co-ordinate in our grid of cells  
+ *  Base class for all maze solver algorithms
  */
-struct cell
+class CSolvingAlgorithm
 {
-    int     x;
-    int     y;
+public:
 
-    std::vector<cell>   neighbours;
+    CSolvingAlgorithm() = delete;
+
+    /**
+     *  Constructor
+     */
+    explicit CSolvingAlgorithm(const CMaze& maze);
+
+    /**
+     *
+     */
+    virtual ~CSolvingAlgorithm(){}
+
+    /**
+     *  Function that a maze solver will implement
+     */
+    virtual void SolveMaze(const std::string& fname) = 0;
+
+
+protected:
+    CMaze maze;
 };
 
-
 }
+
+
+
+
+
+
+
 
 #endif

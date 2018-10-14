@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2018 Jesse Buhagiar and Timothy Davis
+ *  Copyright (c) 2018 Jesse Buhagiar
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -19,27 +19,36 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  **/
-#ifndef _CELL_HPP_INCLUDED_
-#define _CELL_HPP_INCLUDED_
+#ifndef DFSROUTE_HPP_INCLUDED
+#define DFSROUTE_HPP_INCLUDED
 
-#include <set>
+#include "solvealg.hpp"
 
-namespace Mazer{
+#include <string>
 
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers" // HAHAHAHA BETCHA CAN'T FIND ME!
+namespace Mazer {
 
 /**
- *  A cell is a logical (x, y) cartesian co-ordinate in our grid of cells  
+ *  Maze routing 
  */
-struct cell
+class CDFSRouter : public CSolvingAlgorithm
 {
-    int     x;
-    int     y;
+public:
+    CDFSRouter() = delete;
 
-    std::vector<cell>   neighbours;
+    /**
+     *  Inherited Constructor
+     */
+    explicit CDFSRouter(const CMaze& maze);
+
+    /**
+     *  Actually solve the maze
+     */
+    void SolveMaze(const std::string& fname);
 };
 
 
 }
+
 
 #endif
