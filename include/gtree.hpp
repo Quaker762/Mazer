@@ -73,11 +73,18 @@ public:
      */
     virtual int GetNextCellIndex(void) = 0;
 
+    /**
+     *  Function to get the cell-list from outside gtree
+     */
+    std::vector<std::vector<cell>>& GetCellList(){return cells;} 
+
 protected:
     CMaze                       maze;       /**< Our maze object (Should be used for data only!) */
     
     std::vector<cell>           cellList;   /**< Our cell list, C, for the growing tree */
     std::mt19937                rng;        /**< Our random number generator */
+
+    std::vector<std::vector<cell>> cells;   /**< Hack list to get our maze to actually fuckin solve it. */
 };
 
 }

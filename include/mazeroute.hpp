@@ -45,7 +45,7 @@ public:
     /**
      *  Actually solve the maze
      */
-    void SolveMaze(const std::string& fname);
+    void SolveMaze(const std::string& fname, const std::vector<std::vector<cell>>& cells);
 
 private:
     CBinaryHeap<node> heap;

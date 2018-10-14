@@ -32,7 +32,6 @@
 
 #undef _DEBUG_
 
-static const Mazer::cell INVALID_CELL = Mazer::cell{-1, -1};
 
 static std::mt19937 rng;
 

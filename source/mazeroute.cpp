@@ -26,6 +26,11 @@
 #include <fstream>
 #include <iostream>
 
+#define NORTH 0
+#define SOUTH 1
+#define EAST 2
+#define WEST 3
+
 Mazer::CMazeRouter::CMazeRouter(const Mazer::CMaze& _maze)
     : CSolvingAlgorithm(_maze), heap()
 {
@@ -38,7 +43,7 @@ int ManhattanDistance(Mazer::cell c1, Mazer::cell c2)
     return std::abs(c1.x - c2.x) + std::abs(c1.y - c2.y);
 }
 
-void Mazer::CMazeRouter::SolveMaze(const std::string& fname)
+void Mazer::CMazeRouter::SolveMaze(const std::string& fname, const std::vector<std::vector<Mazer::cell>>& cells)
 {
     using namespace Mazer;
 
@@ -46,6 +51,9 @@ void Mazer::CMazeRouter::SolveMaze(const std::string& fname)
     cell dst;       // Our destination (which is [width - 1, height - 1])
     cell cur;       // Our current node
     int  md_best;   // Stores the closest md we ever had to dst
+
+    static_cast<void>(md_best); // Shut gcc up about "Unused Paramater"
+    static_cast<void>(cells);
 
     src.x = 0;
     src.y = 0;
@@ -63,6 +71,33 @@ void Mazer::CMazeRouter::SolveMaze(const std::string& fname)
     f.open(fname, std::ios_base::ate | std::ios_base::app);
 
     /**
+     *  This doesn't work at all...
+     *
+    while(cellList.back().x != dst.x && cellList.back().y != dst.y && cellList.size() != 0)
+    {
+       if(cellList.back().neighbours.at(0).x != -1)
+       {
+           cellList.push_back(cells.at(cellList.back().y).at(cellList.back().x+1));
+       }
+       else if(cellList.back().neighbours.at(1).x != -1)
+       {
+           cellList.push_back(cells.at(cellList.back().y+1).at(cellList.back().x));
+       }
+       else if(cellList.back().neighbours.at(2).x != -1)
+       {
+           cellList.push_back(cells.at(cellList.back().y).at(cellList.back().x-1));
+       }
+       else if(cellList.back().neighbours.at(3).x != -1)
+       {
+           cellList.push_back(cells.at(cellList.back().y-1).at(cellList.back().x));
+       }
+       else
+       {
+           cellList.pop_back();
+       }
+    }
+
+    
     for(int i = 0; i < cur.neighbours.size(); i ++)
     {
         f << "\t<line stroke='red' stroke-width='0.5' ";
@@ -72,8 +107,9 @@ void Mazer::CMazeRouter::SolveMaze(const std::string& fname)
         f << "' y2='" << static_cast<double>(cur.neighbours.at(i).y + 0.5);
         f << "' />" << std::endl;
     }
-    */
 
+    */
+    
     f << "</svg>";
     f.close();
 }

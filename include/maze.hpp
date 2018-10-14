@@ -36,6 +36,8 @@
 
 namespace Mazer{
 
+static const cell INVALID_CELL = Mazer::cell{-1, -1};
+
 class CMaze
 {
 public:

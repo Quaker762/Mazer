@@ -223,7 +223,7 @@ void Mazer::CArgs::Dispatch() const
         }
 
         solver = std::make_unique<CMazeRouter>(genmaze.get()->GetMaze());
-        solver->SolveMaze(svgPath);
+        solver->SolveMaze(svgPath, genmaze.get()->GetCellList());
     }
 
     if(ops.at(Operations::LOAD_BIN))

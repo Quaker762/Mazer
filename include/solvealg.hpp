@@ -25,6 +25,7 @@
 #include "maze.hpp"
 
 #include <string>
+#include <vector>
 
 namespace Mazer {
 
@@ -51,11 +52,12 @@ public:
     /**
      *  Function that a maze solver will implement
      */
-    virtual void SolveMaze(const std::string& fname) = 0;
+    virtual void SolveMaze(const std::string& fname, const std::vector<std::vector<cell>>& cells) = 0;
 
 
 protected:
     CMaze maze;
+    std::vector<cell> cellList;
 };
 
 }

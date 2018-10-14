@@ -61,9 +61,23 @@ void Mazer::CGrowingTree::GenerateMaze()
     Mazer::Log(Mazer::LogLevel::INFO, "First random cell at (%d, %d)\n", c.x, c.y);
 
     cellList.push_back(c); // Add a random cell to the cell List..
+   
+    cells.resize(maze.GetHeight());
+
+    // Generate a cell map (for neighbours)
+    for(int y = 0; y < maze.GetHeight(); y++)
+    {
+        cells.at(y).resize(maze.GetWidth());
+        for(int x = 0; x < maze.GetWidth(); x++)
+        {
+            cells.at(y).at(x).x = x;
+            cells.at(y).at(x).y = y;
+            cells.at(y).at(x).neighbours.resize(4);
+            std::fill(cells.at(y).at(x).neighbours.begin(), cells.at(y).at(x).neighbours.end(), INVALID_CELL);
+        }
+    }
 
     // Keep going until we're outta cells!
-    
     while(!cellList.empty())
     {
         int     cellIndex = GetNextCellIndex();
@@ -99,6 +113,7 @@ void Mazer::CGrowingTree::GenerateMaze()
                 e.c_A = c;
                 e.c_B = newCell;
                 
+                cells.at(c.y).at(c.x).neighbours.push_back(newCell);
                 //Mazer::Log(Mazer::LogLevel::INFO, "Neighbour at (%d,%d)\n", newCell.x, newCell.y);
 
                 maze.AddEdge(e);
@@ -119,6 +134,8 @@ void Mazer::CGrowingTree::GenerateMaze()
             cellList.erase(cellList.begin() + cellIndex);
         }
     }
+
+    std::cout << cells.at(0).at(0).neighbours.size() << std::endl;
 }
 
 
