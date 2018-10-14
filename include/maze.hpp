@@ -29,6 +29,7 @@
 #include <list>
 #include <cstdint>
 #include <ctime>
+#include <set>
 
 #include "cell.hpp"
 #include "edge.hpp"

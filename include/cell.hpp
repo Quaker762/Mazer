@@ -22,7 +22,11 @@
 #ifndef _CELL_HPP_INCLUDED_
 #define _CELL_HPP_INCLUDED_
 
+#include <set>
+
 namespace Mazer{
+
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers" // HAHAHAHA BETCHA CAN'T FIND ME!
 
 /**
  *  A cell is a logical (x, y) cartesian co-ordinate in our grid of cells  
@@ -31,6 +35,8 @@ struct cell
 {
     int     x;
     int     y;
+
+    std::vector<cell>   neighbours;
 };
 
 

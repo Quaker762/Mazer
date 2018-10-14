@@ -68,16 +68,17 @@ void Mazer::CGrowingTree::GenerateMaze()
     {
         int     cellIndex = GetNextCellIndex();
         cell    c = cellList.at(cellIndex);
-
+        
         //Mazer::Log(Mazer::LogLevel::INFO, "cellIndex == %d, cellList.size() == %d\n", cellIndex, cellList.size());
 
         // Now get all of the cells neighbours
         std::vector<cell> neighbours = maze.GetNeighbours(c); // Hehe, I knew this function would come in handy!
-
+        
         // Try out each direction
         for(int i = 0; i < 4; i++)
         {
             cell newCell = c;
+
             std::shuffle(directions.begin(), directions.end(), rng);
             
             newCell.x += directions.at(0).x;
@@ -97,6 +98,8 @@ void Mazer::CGrowingTree::GenerateMaze()
                 edge e;
                 e.c_A = c;
                 e.c_B = newCell;
+                
+                //Mazer::Log(Mazer::LogLevel::INFO, "Neighbour at (%d,%d)\n", newCell.x, newCell.y);
 
                 maze.AddEdge(e);
                 // Add this cell to the cellList (???)
@@ -104,6 +107,8 @@ void Mazer::CGrowingTree::GenerateMaze()
                 cellIndex = -1;
             }
 
+            //Mazer::Log(Mazer::LogLevel::INFO, "c.neighbours.size() == %d\n", c.neighbours.size());
+            
             if(cellIndex == -1)
                 break;
         }

@@ -23,6 +23,7 @@
 #define MAZEROUTE_HPP_INCLUDED
 
 #include "solvealg.hpp"
+#include "heap.hpp"
 
 #include <string>
 
@@ -45,6 +46,10 @@ public:
      *  Actually solve the maze
      */
     void SolveMaze(const std::string& fname);
+
+private:
+    CBinaryHeap<node> heap;
+    std::vector<Mazer::cell> cellList;
 };
 
 

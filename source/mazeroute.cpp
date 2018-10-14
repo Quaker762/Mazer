@@ -27,9 +27,10 @@
 #include <iostream>
 
 Mazer::CMazeRouter::CMazeRouter(const Mazer::CMaze& _maze)
-    : CSolvingAlgorithm(_maze)
+    : CSolvingAlgorithm(_maze), heap()
 {
     Mazer::Log(Mazer::LogLevel::INFO, "Using Maze Routing Algorithm\n");
+
 }
 
 int ManhattanDistance(Mazer::cell c1, Mazer::cell c2)
@@ -50,18 +51,28 @@ void Mazer::CMazeRouter::SolveMaze(const std::string& fname)
     src.y = 0;
     
     // Now, I could technically have 1
-    cur.x = 0;
-    cur.y = 0;
+    cur.x = 1;
+    cur.y = 1;
+    cellList.push_back(src);
 
     dst.x = maze.GetWidth() - 1;
     dst.y = maze.GetHeight() - 1;
-
-    md_best = ManhattanDistance(src, dst);
-    Log(LogLevel::INFO, "md_best = %d\n", md_best);
+    
     
     std::ofstream f;
     f.open(fname, std::ios_base::ate | std::ios_base::app);
 
+    /**
+    for(int i = 0; i < cur.neighbours.size(); i ++)
+    {
+        f << "\t<line stroke='red' stroke-width='0.5' ";
+        f << "x1 ='" << static_cast<double>(cur.x + 0.5);
+        f << "' y1='" << static_cast<double>(cur.y + 0.5);
+        f << "' x2='" << static_cast<double>(cur.neighbours.at(i).x + 0.5);
+        f << "' y2='" << static_cast<double>(cur.neighbours.at(i).y + 0.5);
+        f << "' />" << std::endl;
+    }
+    */
 
     f << "</svg>";
     f.close();

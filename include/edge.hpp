@@ -22,8 +22,6 @@
 #ifndef _EDGE_HPP_INCLUDED_
 #define _EDGE_HPP_INCLUDED_
 
-#include "cell.hpp"
-
 namespace Mazer
 {
 
